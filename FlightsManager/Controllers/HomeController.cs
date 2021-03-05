@@ -18,12 +18,17 @@ namespace FlightsManager.Controllers
             _logger = logger;
         }
 
-        public IActionResult Index()
+        public IActionResult Reservations()
         {
             return View();
         }
 
-        public IActionResult Privacy()
+        public IActionResult Flights()
+        {
+            return View();
+        }
+
+        public IActionResult Administer()
         {
             return View();
         }
