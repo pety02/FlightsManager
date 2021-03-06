@@ -28,7 +28,12 @@ namespace FlightsManager.Controllers
             return View();
         }
 
-        public IActionResult Administer()
+        public IActionResult Administer_Login()
+        {
+            return View();
+        }
+
+        public IActionResult Administer_SignUp()
         {
             return View();
         }
