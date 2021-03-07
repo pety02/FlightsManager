@@ -1,0 +1,64 @@
+﻿@{
+    ViewData["Title"] = "Sign Up";
+}
+<h1>@ViewData["Title"]</h1>
+
+<p>Personal Information:</p>
+<span>Name:</span>
+<input type="text" name="name" />
+<span>Family:</span>
+<input type="text" name="family" />
+<br />
+<span>PIN:</span>
+<input type="text" name="pin" />
+<span>Phone Number:</span>
+<input type="text" name="phoneNumber" />
+<span>Email:</span>
+<input type="text" name="email" />
+<br />
+<hr />
+
+<p>Address:</p>
+<span>Continent:</span>
+<select name="continent">
+    <option>Antarctida</option>
+    <option>Asia</option>
+    <option>Africa</option>
+    <option>Australia</option>
+    <option>Europe</option>
+    <option>North America</option>
+    <option>South America</option>
+</select>
+<span>Country:</span>
+<input type="text" name="country" />
+<span>Occupation Area:</span>
+<input type="text" name="livingArea" />
+<span>Destricted Area:</span>
+<input type="text" name="destrictedArea" />
+<br />
+<span>Street:</span>
+<input type="text" name="street" />
+<span>No:</span>
+<input type="text" name="number" />
+<span>Floor:</span>
+<input type="text" name="floor" />
+<span>Apartament:</span>
+<input type="text" name="apartament" />
+<br />
+<hr />
+
+<p>Profile Information:</p>
+<span>Username:</span>
+<input type="text" name="username" />
+<span>Password:</span>
+<input type="password" name="pass1" />
+<span>Re-enter Password:</span>
+<input type="password" name="pass2" />
+<span>Role:</span>
+<select name="employeeRole">
+    <option>Employee</option>
+</select>
+<br />
+
+<a type="button" name="signUpBtn" asp-area="" asp-controller="Employee" asp-action="SignUpIndex">Sign Up</a>
+<a type="button" name="signUpBtn" asp-area="" asp-controller="Employee" asp-action="LoginForm">Login</a>

@@ -7,7 +7,6 @@ namespace FlightsManager.Models.Web.Employees
 {
     public class IndexEmployeeViewModel
     {
-        public string Name { get; set; }
-        public string Family { get; set; }
+        public List<EmployeeViewModel> Items { get; set; }
     }
 }

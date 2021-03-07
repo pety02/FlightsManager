@@ -1,0 +1,27 @@
+﻿@model FlightsManager.Models.Web.Employees.LoginEmployeeViewModel
+@{
+    ViewData["Title"] = "Login";
+}
+<h1>@ViewData["Title"]</h1>
+
+<form asp-action="Login">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div>
+        <span asp-for="Username">Username:</span>
+        <input asp-for="Username" type="text" />
+        <span asp-validation-for="Username" class="text-danger"></span>
+    </div>
+    <div>
+        <span asp-for="Password">Password:</span>
+        <input asp-for="Password" type="password" />
+        <span asp-validation-for="Password" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <input type="submit" value="Login" class="btn btn-primary" />
+    </div>
+</form>
+<a type="button" name="signUpBtn" asp-area="" asp-controller="Employee" asp-action="SignUpForm">Sign Up</a>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

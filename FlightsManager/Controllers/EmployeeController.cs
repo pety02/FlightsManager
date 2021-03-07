@@ -19,17 +19,7 @@ namespace FlightsManager.Controllers
             _context = new FlightsManagerContext();
         }
 
-        public IActionResult SignUpIndex(IndexEmployeeViewModel model)
-        {
-            return View(model);
-        }
-
-        public IActionResult LoginIndex(IndexEmployeeViewModel model)
-        {
-            return View(model);
-        }
-
-        public IActionResult SignUp() 
+        public IActionResult SignUpForm() 
         {
             SignUpEmployeeViewModel model = new SignUpEmployeeViewModel();
             return View(model);
@@ -56,13 +46,18 @@ namespace FlightsManager.Controllers
                 _context.Add(emp);
                 await _context.SaveChangesAsync();
 
-                return RedirectToAction(nameof(SignUpIndex));
+                return RedirectToAction(nameof(SignUp));
             }
 
             return View(model);
         }
 
-        public IActionResult Login()
+        public IActionResult SignUp(IndexEmployeeViewModel model)
+        {
+            return View(model);
+        }
+
+        public IActionResult LoginForm()
         {
             LoginEmployeeViewModel model = new LoginEmployeeViewModel();
             return View(model);
@@ -76,8 +71,28 @@ namespace FlightsManager.Controllers
             {
                 var query = from emp in _context.Employees where emp.Username == model.Username && emp.Password == model.Password select emp;
                 List<Employee> employees = await query.ToListAsync();
-                return RedirectToAction(nameof(LoginIndex));
+                Employee employee = employees[0];
+                EmployeeViewModel empViewModel = new EmployeeViewModel()
+                { 
+                    Id = employee.Id,
+                    Name = employee.Name,
+                    Family = employee.Family,
+                    Email = employee.Email,
+                    PhoneNumber = employee.PhoneNumber,
+                    Username = employee.Username,
+                    Password = employee.Password,
+                    AddressId = employee.AddressId,
+                    RoleId = employee.RoleId
+                };
+
+                return RedirectToAction(nameof(Login));
             }
+
+            return View(model);
+        }
+
+        public IActionResult Login(IndexEmployeeViewModel model)
+        {
 
             return View(model);
         }
