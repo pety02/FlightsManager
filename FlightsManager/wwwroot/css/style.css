@@ -1,0 +1,25 @@
+﻿body {
+
+}
+
+.title {
+    padding: 2rem 0 0 1rem;
+}
+
+.form {
+    padding: 1rem 0 0 1rem;
+}
+
+.required-fields {
+    width: 90%;
+    display: inline-block;
+    float: left;
+}
+
+.required-fields-symbol {
+    width: 10%;
+    display: inline-block;
+    float: left;
+    font-size: 2rem;
+    padding-left: 1%;
+}

@@ -1,64 +1,114 @@
-﻿@{
+﻿@model FlightsManager.Models.Web.Employees.SignUpEmployeeViewModel
+@{
     ViewData["Title"] = "Sign Up";
 }
-<h1>@ViewData["Title"]</h1>
+<h1 class="text-left text-info title">@ViewData["Title"]</h1>
 
-<p>Personal Information:</p>
-<span>Name:</span>
-<input type="text" name="name" />
-<span>Family:</span>
-<input type="text" name="family" />
-<br />
-<span>PIN:</span>
-<input type="text" name="pin" />
-<span>Phone Number:</span>
-<input type="text" name="phoneNumber" />
-<span>Email:</span>
-<input type="text" name="email" />
-<br />
-<hr />
+<form asp-action="SignUp" class="container container-fluid form">
+    <table>
+        <thead>
+            <tr class="row">
+                <th class="col-md-4">
+                    Personal Information
+                </th>
+                <th class="col-md-4">
+                    Address
+                </th>
+                <th class="col-md-4">
+                    Profile Information
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr class="row">
+                <td class="col-md-4">
+                    <input asp-for="Name" type="text" class="form-control required-fields" placeholder="Name" />
+                    <span class="text-danger required-fields-symbol">*</span><br />
+                    <span asp-validation-for="Name" class="text-danger"></span>
 
-<p>Address:</p>
-<span>Continent:</span>
-<select name="continent">
-    <option>Antarctida</option>
-    <option>Asia</option>
-    <option>Africa</option>
-    <option>Australia</option>
-    <option>Europe</option>
-    <option>North America</option>
-    <option>South America</option>
-</select>
-<span>Country:</span>
-<input type="text" name="country" />
-<span>Occupation Area:</span>
-<input type="text" name="livingArea" />
-<span>Destricted Area:</span>
-<input type="text" name="destrictedArea" />
-<br />
-<span>Street:</span>
-<input type="text" name="street" />
-<span>No:</span>
-<input type="text" name="number" />
-<span>Floor:</span>
-<input type="text" name="floor" />
-<span>Apartament:</span>
-<input type="text" name="apartament" />
-<br />
-<hr />
+                    <input asp-for="Family" type="text" class="form-control required-fields" placeholder="Family" />
+                    <span class="text-danger required-fields-symbol">*</span><br />
+                    <span asp-validation-for="Family" class="text-danger"></span>
 
-<p>Profile Information:</p>
-<span>Username:</span>
-<input type="text" name="username" />
-<span>Password:</span>
-<input type="password" name="pass1" />
-<span>Re-enter Password:</span>
-<input type="password" name="pass2" />
-<span>Role:</span>
-<select name="employeeRole">
-    <option>Employee</option>
-</select>
-<br />
+                    <input asp-for="Egn" type="text" class="form-control required-fields" placeholder="Personal Identification Number" />
+                    <span class="text-danger required-fields-symbol">*</span><br />
+                    <span asp-validation-for="Egn" class="text-danger"></span>
 
-<a type="button" name="signUpBtn" asp-area="" asp-controller="Employee" asp-action="SignUpIndex">Sign Up</a>
-<a type="button" name="signUpBtn" asp-area="" asp-controller="Employee" asp-action="LoginForm">Login</a>
+                    <input asp-for="PhoneNumber" type="text" class="form-control required-fields" placeholder="Phone Number" />
+                    <span class="text-danger required-fields-symbol">*</span><br />
+                    <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+
+                    <input asp-for="Email" type="text" class="form-control required-fields" placeholder="Email" />
+                    <span class="text-danger required-fields-symbol">*</span><br />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </td>
+                <td class="col-md-4">
+                    <select asp-for="ContinentId" class="form-control required-fields">
+                        <option value="1">Antarctida</option>
+                        <option value="2">Asia</option>
+                        <option value="3">Africa</option>
+                        <option value="4">Australia</option>
+                        <option value="5">Europe</option>
+                        <option value="6">North America</option>
+                        <option value="7">South America</option>
+                    </select>
+                    <span class="text-danger required-fields-symbol">*</span><br />
+                    <span asp-validation-for="ContinentId" class="text-danger"></span>
+
+                    <input asp-for="Country" type="text" class="form-control required-fields" placeholder="Country" />
+                    <span class="text-danger required-fields-symbol">*</span><br />
+                    <span asp-validation-for="Country" class="text-danger"></span>
+
+                    <input asp-for="LivingArea" type="text" class="form-control required-fields" placeholder="Living Area" />
+                    <span class="text-danger required-fields-symbol">*</span><br />
+                    <span asp-validation-for="LivingArea" class="text-danger"></span>
+
+                    <input asp-for="DestrictedArea" type="text" class="form-control required-fields" placeholder="Destricted Area" />
+                    <span class="text-danger required-fields-symbol">*</span><br />
+                    <span asp-validation-for="DestrictedArea" class="text-danger"></span>
+
+                    <input asp-for="Street" type="text" class="form-control required-fields" placeholder="Street" />
+                    <span class="text-danger required-fields-symbol">*</span><br />
+                    <span asp-validation-for="Street" class="text-danger"></span>
+
+                    <input asp-for="Number" type="text" class="form-control required-fields" placeholder="Number" />
+                    <span class="text-danger required-fields-symbol">*</span><br />
+                    <span asp-validation-for="Number" class="text-danger"></span>
+
+                    <input asp-for="Floor" type="text" class="form-control required-fields" placeholder="Floor" />
+                    <br />
+                    <span asp-validation-for="Floor" class="text-danger"></span>
+
+                    <input asp-for="Apartament" type="text" class="form-control required-fields" placeholder="Apartament" />
+                    <br />
+                    <span asp-validation-for="Apartament" class="text-danger"></span>
+                </td>
+                <td class="col-md-4">
+                    <input asp-for="Username" type="text" class="form-control required-fields" placeholder="Username" />
+                    <span class="text-danger required-fields-symbol">*</span><br />
+                    <span asp-validation-for="Username" class="text-danger"></span>
+
+                    <input asp-for="Password" type="password" class="form-control required-fields" placeholder="Password" />
+                    <span class="text-danger required-fields-symbol">*</span><br />
+                    <span asp-validation-for="Password" class="text-danger"></span>
+
+                    <input asp-for="ReEnteredPassword" type="password" class="form-control required-fields" placeholder="Re-Enter Password" />
+                    <span class="text-danger required-fields-symbol">*</span><br />
+                    <span asp-validation-for="ReEnteredPassword" class="text-danger"></span>
+
+                    <select asp-for="RoleId" class="form-control required-fields">
+                        <option value="1">Employee</option>
+                    </select>
+                    <span class="text-danger required-fields-symbol">*</span><br />
+                    <span asp-validation-for="RoleId" class="text-danger"></span>
+                </td>
+            </tr>
+            <tr class="row">
+                <td class="col-md-12">
+                    <input type="submit" value="Sign Up" />
+                    <a type="button" name="signUpBtn" asp-area="" asp-controller="Employee" asp-action="LoginForm">Login</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</form>

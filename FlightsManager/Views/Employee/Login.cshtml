@@ -3,4 +3,4 @@
     ViewData["Title"] = "Login";
 }
 <h1>@ViewData["Title"]</h1>
-<p>Welcome!</p>
+<p>Welcome, @Html.DisplayFor(modelItem => Model.Items.First().Username)!</p>
