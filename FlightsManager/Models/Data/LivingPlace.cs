@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 #nullable disable
 
-namespace FlightsManager.Models
+namespace FlightsManager.Models.Data
 {
     public partial class LivingPlace
     {

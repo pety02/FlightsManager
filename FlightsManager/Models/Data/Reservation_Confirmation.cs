@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace FlightsManager.Models
+namespace FlightsManager.Models.Data
 {
     public class Reservation_Confirmation
     {

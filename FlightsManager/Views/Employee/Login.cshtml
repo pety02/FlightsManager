@@ -3,4 +3,9 @@
     ViewData["Title"] = "Login";
 }
 <h1>@ViewData["Title"]</h1>
-<p>Welcome, @Html.DisplayFor(modelItem => Model.Items.First().Username)!</p>
+
+@{
+    var employee = ViewData["Employee"] as FlightsManager.Models.Data.Employee;
+}
+ 
+<p>Welcome,  @employee.Username! </p>

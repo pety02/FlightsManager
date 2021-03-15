@@ -1,4 +1,5 @@
 ﻿using FlightsManager.Models;
+using FlightsManager.Models.Data;
 using FlightsManager.Utils;
 using Microsoft.AspNetCore.Mvc;
 using System;

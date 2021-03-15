@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 #nullable disable
 
-namespace FlightsManager.Models
+namespace FlightsManager.Models.Data
 {
     public partial class FlightsManagerContext : DbContext
     {

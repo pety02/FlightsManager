@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 #nullable disable
 
-namespace FlightsManager.Models
+namespace FlightsManager.Models.Data
 {
     public partial class Employee
     {

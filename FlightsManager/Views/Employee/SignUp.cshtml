@@ -1,5 +1,11 @@
-﻿@{
+﻿@model FlightsManager.Models.Web.Employees.SignUpEmployeeViewModel
+@{
     ViewData["Title"] = "Sign Up";
 }
 <h1>@ViewData["Title"]</h1>
-<p>You successfully signed up!</p>
+
+@{
+    var employee = ViewData["Employee"] as FlightsManager.Models.Data.Employee;
+}
+
+<p>Successfully signed up! </p>
