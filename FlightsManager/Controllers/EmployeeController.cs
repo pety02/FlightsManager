@@ -1,6 +1,7 @@
 ﻿using FlightsManager.Models.Data;
 using FlightsManager.Models.Web.Employees;
 using FlightsManager.Utils;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -13,11 +14,25 @@ namespace FlightsManager.Controllers
     public class EmployeeController : Controller
     {
         private readonly FlightsManagerContext _context;
+        //private readonly SignInManager<IdentityUser> signInManager;
 
-        public EmployeeController() 
+        public EmployeeController()
         {
             _context = new FlightsManagerContext();
         }
+
+        /*public EmployeeController(SignInManager<IdentityUser> signInManager)
+        {
+            this.signInManager = signInManager;
+            _context = new FlightsManagerContext();
+        }*/
+
+        /*[HttpPost]
+        public async Task<IActionResult> Logout()
+        {
+            await signInManager.SignOutAsync();
+            return RedirectToAction(nameof(LoginForm));
+        }*/
 
         public IActionResult SignUpForm() 
         {
@@ -146,10 +161,38 @@ namespace FlightsManager.Controllers
             return View(model);
         }
 
+        [NonAction]
         public ViewResult Login(Employee model)
         {
             ViewData["Employee"] = model;
             return View();
         }
+
+        /*[HttpGet]
+        public IActionResult Login()
+        {
+            return View();
+        }*/
+
+        /*[HttpPost]
+        public async Task<IActionResult> Login(LoginEmployeeViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                string pass = HashPassword.GenerateSHA512(model.Password);
+                Employee emp = (Employee)(from e in _context.Employees where e.Username == model.Username && e.Password ==  pass select e);
+                var result = await signInManager.PasswordSignInAsync(
+                    emp.Email, emp.Password, model.RememberMe, false);
+
+                if (result.Succeeded)
+                {
+                    return RedirectToAction("reservation","home");
+                }
+
+                ModelState.AddModelError(string.Empty, "Invalid Login Attempt");
+            }
+
+            return View(model);
+        }*/
     }
 }

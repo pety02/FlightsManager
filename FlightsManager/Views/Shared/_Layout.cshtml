@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
     <link rel="stylesheet" href="~/css/style.css" />
+    <script src="~/js/site.js"></script>
 </head>
 <body>
     <header>
@@ -23,11 +24,14 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Reservations">Reservations</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Flights">Flights</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Flight" asp-action="Index">Flights</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Employee" asp-action="LoginForm">Administer</a>
                         </li>
+                        <!--<li id="logOutBtn"style="display:block;">
+                            <a asp-controller="Employee" asp-action="Logout">Log Out</a>
+                        </li>-->
                     </ul>
                 </div>
             </div>

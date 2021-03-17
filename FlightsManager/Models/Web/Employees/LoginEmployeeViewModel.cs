@@ -16,5 +16,8 @@ namespace FlightsManager.Models.Web.Employees
         [MinLength(8), MaxLength(20)]
         [RegularExpression("^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,20}$")]
         public string Password { get; set; }
+
+        /*[Display(Name = "Remember me")]
+        public bool RememberMe { get; set; }*/
     }
 }

@@ -1,0 +1,45 @@
+﻿@model FlightsManager.Models.Data.Flight
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+
+@{
+    var flight = ViewData["Flight"] as FlightsManager.Models.Data.Flight;
+}
+<h1>Flight Information</h1>
+<table>
+    <tr>
+        <td>
+            Location From:
+        </td>
+        <td>
+            @flight.LocationFromId
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Location To:
+        </td>
+        <td>
+            @flight.LocationToId
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Take Off Date:
+        </td>
+        <td>
+            @flight.TakeOffDateTime
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Landing Date:
+        </td>
+        <td>
+            @flight.LandingDateTime
+        </td>
+    </tr>
+</table>
