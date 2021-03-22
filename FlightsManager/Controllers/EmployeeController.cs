@@ -1,6 +1,7 @@
 ﻿using FlightsManager.Models.Data;
 using FlightsManager.Models.Web.Employees;
 using FlightsManager.Utils;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -15,6 +16,8 @@ namespace FlightsManager.Controllers
     {
         private readonly FlightsManagerContext _context;
         //private readonly SignInManager<IdentityUser> signInManager;
+
+        private HttpContext _httpCtx;
 
         public EmployeeController()
         {
@@ -154,8 +157,12 @@ namespace FlightsManager.Controllers
                 var query = from emp in _context.Employees where emp.Username == model.Username && emp.Password == hashedPass select emp;
                 List<Employee> employees = await query.ToListAsync();
                 Employee employee = employees[0];
+                _httpCtx.Items["UserId"] = employee.Id;
 
-                return Login(employee);
+                if (isLoggedIn())
+                {
+                    return Login(employee);
+                }
             }
 
             return View(model);
@@ -194,5 +201,17 @@ namespace FlightsManager.Controllers
 
             return View(model);
         }*/
+
+        public bool isLoggedIn()
+        {
+            if (_httpCtx.Items["UserId"] != null)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
     }
 }

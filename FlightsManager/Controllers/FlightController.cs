@@ -154,6 +154,17 @@ namespace FlightsManager.Controllers
         public ViewResult Details(Flight model)
         {
             ViewData["Flight"] = model;
+
+            Address locFrom = _context.Addresses.Find(model.LocationFromId);
+            Country countrFrom = _context.Countries.Find(locFrom.CountryId);
+            LivingPlace lpFrom = _context.LivingPlaces.Find(locFrom.LivingPlaceId);
+            ViewData["LocationFrom"] = lpFrom.Name + ", " + countrFrom.Name;
+            
+            Address locTo = _context.Addresses.Find(model.LocationToId);
+            Country countrTo = _context.Countries.Find(locTo.CountryId);
+            LivingPlace lpTo = _context.LivingPlaces.Find(locTo.LivingPlaceId);
+            ViewData["LocationTo"] = lpTo.Name + ", " + countrTo.Name;
+            
             return View();
         }
 
