@@ -21,14 +21,14 @@ namespace FlightsManager.Models.Data
         public virtual DbSet<AddressType> AddressTypes { get; set; }
         public virtual DbSet<Continent> Continents { get; set; }
         public virtual DbSet<Country> Countries { get; set; }
-        public virtual DbSet<CountryLivingPlace> CountryLivingPlaces { get; set; }
-        public virtual DbSet<DestrictedArea> DestrictedAreas { get; set; }
         public virtual DbSet<DestrictedAreaStreet> DestrictedAreaStreets { get; set; }
+        public virtual DbSet<DestrictedArea> DestrictedAreas { get; set; }
+        public virtual DbSet<CountryLivingPlace> CountryLivingPlaces { get; set; }
         public virtual DbSet<Employee> Employees { get; set; }
         public virtual DbSet<EmployeeRole> EmployeeRoles { get; set; }
         public virtual DbSet<Flight> Flights { get; set; }
         public virtual DbSet<LivingPlace> LivingPlaces { get; set; }
-        public virtual DbSet<LivingPlaceDestrictedAreaId> LivingPlaceDestrictedAreaIds { get; set; }
+        public virtual DbSet<LivingPlaceDestrictedArea> LivingPlaceDestrictedAreas { get; set; }
         public virtual DbSet<Nationality> Nationalities { get; set; }
         public virtual DbSet<Passager> Passagers { get; set; }
         public virtual DbSet<Plane> Planes { get; set; }
@@ -327,7 +327,7 @@ namespace FlightsManager.Models.Data
                     .IsUnicode(false);
             });
 
-            modelBuilder.Entity<LivingPlaceDestrictedAreaId>(entity =>
+            modelBuilder.Entity<LivingPlaceDestrictedArea>(entity =>
             {
                 entity.ToTable("LivingPlace_DestrictedAreaID");
 

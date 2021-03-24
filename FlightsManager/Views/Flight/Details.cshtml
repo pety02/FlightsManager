@@ -1,14 +1,11 @@
 ﻿@model FlightsManager.Models.Data.Flight
-@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
-
 @{
     var flight = ViewData["Flight"] as FlightsManager.Models.Data.Flight;
     var locationFrom = ViewData["LocationFrom"] as string;
     var locationTo = ViewData["LocationTo"] as string;
+    var duration = (flight.LandingDateTime - flight.TakeOffDateTime).TotalMinutes;
+
+    var passagersNames = ViewData["passagers"] as string;
 }
 <h1>Flight Information</h1>
 <table>
@@ -38,10 +35,18 @@
     </tr>
     <tr>
         <td>
-            Landing Date:
+            Duration:
         </td>
         <td>
-            @flight.LandingDateTime
+            @duration min.
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Passagers:
+        </td>
+        <td>
+            @passagersNames
         </td>
     </tr>
 </table>

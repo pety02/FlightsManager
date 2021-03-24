@@ -20,6 +20,43 @@ namespace FlightsManager.Controllers
             _context = new FlightsManagerContext();
         }
 
+        public async Task<IActionResult> AdminIndex(IndexFlightViewModel model)
+        {
+            model.Pager = new PagerViewModel();
+            model.Pager.CurrentPage = model.Pager.CurrentPage <= 0 ? 1 : model.Pager.CurrentPage;
+
+            List<FlightViewModel> items = await _context.Flights.Skip((model.Pager.CurrentPage - 1) * PageSize).Take(PageSize).Select(c => new FlightViewModel()
+            {
+                Id = c.Id,
+                LocationFromId = c.LocationFromId,
+                LocationToId = c.LocationToId,
+                TakeOffDateTime = c.TakeOffDateTime,
+                LandingDateTime = c.LandingDateTime,
+                PlaneId = c.PlaneId
+
+            }).ToListAsync();
+
+            model.Items = items;
+            model.Pager.PagesCount = (int)Math.Ceiling(_context.Flights.Count() / (double)PageSize);
+
+            //////////////////// check for logged in employee -> admin
+            byte[] empIdBytes = new byte[200];
+            if (HttpContext.Session.TryGetValue("empId", out empIdBytes))
+            {
+                int employeeId = int.Parse(Encoding.UTF8.GetString(empIdBytes));
+                List<Employee> employees = await (from emp in _context.Employees where emp.Id == employeeId select emp).ToListAsync();
+                Employee employee = employees[0];
+                ViewData["isLoggedIn"] = true;
+            }
+            else
+            {
+                ViewData["isLoggedIn"] = false;
+            }
+            ///////////////////////////////////////////////////////////////
+
+            return View(model);
+        }
+
         public async Task<IActionResult> Index(IndexFlightViewModel model)
         {
             model.Pager = new PagerViewModel();
@@ -39,6 +76,7 @@ namespace FlightsManager.Controllers
             model.Items = items;
             model.Pager.PagesCount = (int)Math.Ceiling(_context.Flights.Count() / (double)PageSize);
 
+            //////////////////// check for logged in employee -> admin
             byte[] empIdBytes = new byte[200];
             if (HttpContext.Session.TryGetValue("empId", out empIdBytes))
             {
@@ -51,6 +89,7 @@ namespace FlightsManager.Controllers
             {
                 ViewData["isLoggedIn"] = false;
             }
+            ///////////////////////////////////////////////////////////////
 
             return View(model);
         }
@@ -160,6 +199,26 @@ namespace FlightsManager.Controllers
         public async Task<IActionResult> Details(int id)
         {
             Flight flight = await _context.Flights.FindAsync(id);
+            var query1 = from r in _context.Reservations where r.Id == flight.Id select r;
+            List<Reservation> reservations = query1.ToList();
+            string passagersNames = "";
+            foreach (var item in reservations)
+            {
+                Ticket ticket = _context.Tickets.Find(item.TicketId);
+                Flight _flight = _context.Flights.Find(ticket.FlightId);
+                var query2 = from rp in _context.ReservationPassagers where rp.ResrvationId == item.Id select rp;
+                List<ReservationPassager> reservationPassagers = query2.ToList();
+                string del = " ";
+                foreach (var item2 in reservationPassagers)
+                {
+                    Passager p = _context.Passagers.Find(item2.PassagerId);
+                    passagersNames += del + p.FirstName + " " + p.LastName;
+                    del = ", ";
+                }
+            }
+
+            ViewData["passagers"] = passagersNames;
+
             return Details(flight);
         }
 

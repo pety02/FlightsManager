@@ -1,6 +1,6 @@
 ﻿@model FlightsManager.Models.Web.Flights.IndexFlightViewModel
-@{ 
-    bool isLoggedIn = (bool) ViewData["isLoggedIn"];
+@{
+    bool isLoggedIn = (bool)ViewData["isLoggedIn"];
     if (isLoggedIn)
     {
         <a type="button" asp-area="" asp-controller="Employee" asp-action="LogOut">LogOut</a>
@@ -27,6 +27,8 @@
                 Landing Date
             </th>
             <th></th>
+            <th></th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
@@ -48,6 +50,12 @@
                 <td>
                     <a asp-action="Details" asp-route-id="@item.Id">Details</a>
                 </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+                </td>
+                <td>
+                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                </td>
             </tr>
         }
     </tbody>
@@ -60,3 +68,4 @@
         }
     </ul>
 </table>
+

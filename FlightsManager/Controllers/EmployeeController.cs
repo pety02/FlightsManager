@@ -38,6 +38,9 @@ namespace FlightsManager.Controllers
             DestrictedArea newDestrictedArea = null;
             Street newStreet = null;
             Address newAddress = null;
+            CountryLivingPlace newCountryLivingPlace = null;
+            LivingPlaceDestrictedArea newLivingPlaceDestrictedArea = null;
+            DestrictedAreaStreet newDestrictedAreaStreet = null;
 
             if (ModelState.IsValid)
             {
@@ -107,6 +110,42 @@ namespace FlightsManager.Controllers
                 }
                 using (var _context = new FlightsManagerContext())
                 {
+                    int id = _context.CountryLivingPlaces.Max(e => e.Id);
+                    newCountryLivingPlace = new CountryLivingPlace()
+                    {
+                        Id = id + 1,
+                        CountryId = newCountry.Id,
+                        LivingPlaceId = newLivingPlace.Id
+                    };
+                    _context.CountryLivingPlaces.Add(newCountryLivingPlace);
+                    _context.SaveChanges();
+                }
+                using (var _context = new FlightsManagerContext())
+                {
+                    int id = _context.LivingPlaceDestrictedAreas.Max(e => e.Id);
+                    newLivingPlaceDestrictedArea = new LivingPlaceDestrictedArea()
+                    {
+                        Id = id + 1,
+                        LivingPlaceId = newLivingPlace.Id,
+                        DestrictedAreaId = newDestrictedArea.Id
+                    };
+                    _context.LivingPlaceDestrictedAreas.Add(newLivingPlaceDestrictedArea);
+                    _context.SaveChanges();
+                }
+                using (var _context = new FlightsManagerContext())
+                {
+                    int id = _context.DestrictedAreaStreets.Max(e => e.Id);
+                    newDestrictedAreaStreet = new DestrictedAreaStreet()
+                    {
+                        Id = id + 1,
+                        DestrictedAreaId = newDestrictedArea.Id,
+                        StreetId = newStreet.Id
+                    };
+                    _context.DestrictedAreaStreets.Add(newDestrictedAreaStreet);
+                    _context.SaveChanges();
+                }
+                using (var _context = new FlightsManagerContext())
+                {
                     int id = _context.Employees.Max(e => e.Id);
                     newEmployee = new Employee()
                     {
@@ -153,7 +192,14 @@ namespace FlightsManager.Controllers
                 if (employee != null)
                 {
                     HttpContext.Session.Set("empId", Encoding.UTF8.GetBytes(employee.Id.ToString()));
-                    return RedirectToAction("Index", "Flight");
+                    if (employee.Id == 1)
+                    {
+                        return RedirectToAction("AdminIndex", "Flight");
+                    }
+                    else
+                    {
+                        return RedirectToAction("Index", "Flight");
+                    }
                 }
                 else
                 {

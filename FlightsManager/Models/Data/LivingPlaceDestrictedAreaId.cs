@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace FlightsManager.Models.Data
 {
-    public partial class LivingPlaceDestrictedAreaId
+    public partial class LivingPlaceDestrictedArea
     {
         public int Id { get; set; }
         public int LivingPlaceId { get; set; }

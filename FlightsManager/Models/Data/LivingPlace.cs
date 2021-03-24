@@ -11,7 +11,7 @@ namespace FlightsManager.Models.Data
         {
             Addresses = new HashSet<Address>();
             CountryLivingPlaces = new HashSet<CountryLivingPlace>();
-            LivingPlaceDestrictedAreaIds = new HashSet<LivingPlaceDestrictedAreaId>();
+            LivingPlaceDestrictedAreaIds = new HashSet<LivingPlaceDestrictedArea>();
         }
 
         public int Id { get; set; }
@@ -19,6 +19,6 @@ namespace FlightsManager.Models.Data
 
         public virtual ICollection<Address> Addresses { get; set; }
         public virtual ICollection<CountryLivingPlace> CountryLivingPlaces { get; set; }
-        public virtual ICollection<LivingPlaceDestrictedAreaId> LivingPlaceDestrictedAreaIds { get; set; }
+        public virtual ICollection<LivingPlaceDestrictedArea> LivingPlaceDestrictedAreaIds { get; set; }
     }
 }
