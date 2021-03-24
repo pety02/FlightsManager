@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace FlightsManager.Controllers
@@ -19,7 +20,6 @@ namespace FlightsManager.Controllers
             _context = new FlightsManagerContext();
         }
 
-        // GET: Contacts
         public async Task<IActionResult> Index(IndexFlightViewModel model)
         {
             model.Pager = new PagerViewModel();
@@ -38,6 +38,19 @@ namespace FlightsManager.Controllers
 
             model.Items = items;
             model.Pager.PagesCount = (int)Math.Ceiling(_context.Flights.Count() / (double)PageSize);
+
+            byte[] empIdBytes = new byte[200];
+            if (HttpContext.Session.TryGetValue("empId", out empIdBytes))
+            {
+                int employeeId = int.Parse(Encoding.UTF8.GetString(empIdBytes));
+                List<Employee> employees = await (from emp in _context.Employees where emp.Id == employeeId select emp).ToListAsync();
+                Employee employee = employees[0];
+                ViewData["isLoggedIn"] = true;
+            }
+            else
+            {
+                ViewData["isLoggedIn"] = false;
+            }
 
             return View(model);
         }
@@ -120,7 +133,7 @@ namespace FlightsManager.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ContactExists(flight.Id))
+                    if (!IsFlightExists(flight.Id))
                     {
                         return NotFound();
                     }
@@ -168,9 +181,27 @@ namespace FlightsManager.Controllers
             return View();
         }
 
-        private bool ContactExists(int id)
+        private bool IsFlightExists(int id)
         {
-            return _context.Flights.Any(e => e.Id == id);
+            bool isExists = _context.Flights.Any(e => e.Id == id);
+            return isExists;
+        }
+
+        [NonAction]
+        private async Task<bool> IsLoggedIn(int empId) 
+        {
+            byte[] empIdBytes = new byte[200];
+            if (HttpContext.Session.TryGetValue("id", out empIdBytes))
+            {
+                int employeeId = int.Parse(Encoding.UTF8.GetString(empIdBytes));
+                List<Employee> employees = await (from emp in _context.Employees where emp.Id == employeeId select emp).ToListAsync();
+                Employee employee = employees[0];
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }

@@ -1,8 +1,10 @@
 ﻿@model FlightsManager.Models.Web.Flights.IndexFlightViewModel
-@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
+@{ 
+    bool isLoggedIn = (bool) ViewData["isLoggedIn"];
+    if (isLoggedIn)
+    {
+        <a type="button" asp-area="" asp-controller="Employee" asp-action="LogOut">LogOut</a>
+    }
 }
 <p>
     <a asp-action="Create">Create New</a>
@@ -45,7 +47,7 @@
                     <a asp-action="Details" asp-route-id="@item.Id">Details</a>
                 </td>
             </tr>
-}
+        }
     </tbody>
     <ul class="pagination">
         @for (var i = 1; i <= Model.Pager.PagesCount; i++)
@@ -53,6 +55,6 @@
             <li class="page-item @(i == Model.Pager.CurrentPage ? "active" : "")">
                 <a asp-route-Pager.CurrentPage="@i" class="page-link">@i</a>
             </li>
-}
+        }
     </ul>
 </table>

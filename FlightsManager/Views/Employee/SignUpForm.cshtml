@@ -4,7 +4,7 @@
 }
 <h1 class="text-left text-info title">@ViewData["Title"]</h1>
 
-<form asp-action="SignUp" class="container container-fluid form">
+<form method="post" asp-action="SignUp" class="container container-fluid form">
     <table>
         <thead>
             <tr class="row">
@@ -105,10 +105,13 @@
             </tr>
             <tr class="row">
                 <td class="col-md-12">
-                    <input type="submit" value="Sign Up" class="btn btn-primary"/>
+                    <input type="submit" value="Sign Up" class="btn btn-primary" />
                     <a type="button" name="signUpBtn" asp-area="" asp-controller="Employee" asp-action="LoginForm">Login</a>
                 </td>
             </tr>
         </tbody>
     </table>
 </form>
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace FlightsManager.Controllers
@@ -15,29 +16,13 @@ namespace FlightsManager.Controllers
     public class EmployeeController : Controller
     {
         private readonly FlightsManagerContext _context;
-        //private readonly SignInManager<IdentityUser> signInManager;
-
-        private HttpContext _httpCtx;
 
         public EmployeeController()
         {
             _context = new FlightsManagerContext();
         }
 
-        /*public EmployeeController(SignInManager<IdentityUser> signInManager)
-        {
-            this.signInManager = signInManager;
-            _context = new FlightsManagerContext();
-        }*/
-
-        /*[HttpPost]
-        public async Task<IActionResult> Logout()
-        {
-            await signInManager.SignOutAsync();
-            return RedirectToAction(nameof(LoginForm));
-        }*/
-
-        public IActionResult SignUpForm() 
+        public IActionResult SignUpForm()
         {
             SignUpEmployeeViewModel model = new SignUpEmployeeViewModel();
             return View(model);
@@ -45,7 +30,7 @@ namespace FlightsManager.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> SignUp(SignUpEmployeeViewModel model) 
+        public async Task<IActionResult> SignUp(SignUpEmployeeViewModel model)
         {
             Employee newEmployee = null;
             Country newCountry = null;
@@ -53,7 +38,9 @@ namespace FlightsManager.Controllers
             DestrictedArea newDestrictedArea = null;
             Street newStreet = null;
             Address newAddress = null;
-            
+
+            if (ModelState.IsValid)
+            {
                 using (var _context = new FlightsManagerContext())
                 {
                     int id = _context.Countries.Max(c => c.Id);
@@ -125,7 +112,7 @@ namespace FlightsManager.Controllers
                     {
                         Id = id + 1,
                         Username = model.Username,
-                        Password = HashPassword.GenerateSHA512("myPass_123!"),
+                        Password = HashPassword.GenerateSHA512(model.Password),
                         Email = model.Email,
                         Name = model.Name,
                         Family = model.Family,
@@ -139,6 +126,11 @@ namespace FlightsManager.Controllers
                 }
 
                 return RedirectToAction(nameof(LoginForm));
+            }
+            else
+            {
+                return View(model);
+            }
         }
 
         public IActionResult LoginForm()
@@ -147,9 +139,9 @@ namespace FlightsManager.Controllers
             return View(model);
         }
 
-        [HttpGet]
+        [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(LoginEmployeeViewModel model) 
+        public async Task<IActionResult> Login(LoginEmployeeViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -157,61 +149,28 @@ namespace FlightsManager.Controllers
                 var query = from emp in _context.Employees where emp.Username == model.Username && emp.Password == hashedPass select emp;
                 List<Employee> employees = await query.ToListAsync();
                 Employee employee = employees[0];
-                _httpCtx.Items["UserId"] = employee.Id;
 
-                if (isLoggedIn())
+                if (employee != null)
                 {
-                    return Login(employee);
+                    HttpContext.Session.Set("empId", Encoding.UTF8.GetBytes(employee.Id.ToString()));
+                    return RedirectToAction("Index", "Flight");
                 }
-            }
-
-            return View(model);
-        }
-
-        [NonAction]
-        public ViewResult Login(Employee model)
-        {
-            ViewData["Employee"] = model;
-            return View();
-        }
-
-        /*[HttpGet]
-        public IActionResult Login()
-        {
-            return View();
-        }*/
-
-        /*[HttpPost]
-        public async Task<IActionResult> Login(LoginEmployeeViewModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                string pass = HashPassword.GenerateSHA512(model.Password);
-                Employee emp = (Employee)(from e in _context.Employees where e.Username == model.Username && e.Password ==  pass select e);
-                var result = await signInManager.PasswordSignInAsync(
-                    emp.Email, emp.Password, model.RememberMe, false);
-
-                if (result.Succeeded)
+                else
                 {
-                    return RedirectToAction("reservation","home");
+                    return View(model);
                 }
-
-                ModelState.AddModelError(string.Empty, "Invalid Login Attempt");
-            }
-
-            return View(model);
-        }*/
-
-        public bool isLoggedIn()
-        {
-            if (_httpCtx.Items["UserId"] != null)
-            {
-                return true;
             }
             else
             {
-                return false;
+                return View(model);
             }
         }
+ 
+        public IActionResult LogOut()
+        {
+            int empId = -1;
+            HttpContext.Session.Set("empId", Encoding.UTF8.GetBytes(empId.ToString()));
+            return RedirectToAction(nameof(LoginForm));
+        } 
     }
 }
