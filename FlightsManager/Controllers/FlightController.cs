@@ -132,6 +132,7 @@ namespace FlightsManager.Controllers
             }
 
             Flight flight = await _context.Flights.FindAsync(id);
+
             if (flight == null)
             {
                 return NotFound();
@@ -164,6 +165,10 @@ namespace FlightsManager.Controllers
                     LandingDateTime = model.LandingDateTime,
                     PlaneId = model.PlaneId
                 };
+
+                ViewData["locationFrom"] = _context.Addresses.Find(flight.LocationFromId);
+                ViewData["locationTo"] = _context.Addresses.Find(flight.LocationToId);
+                ViewData["plane"] = _context.Planes.Find(flight.PlaneId);
 
                 try
                 {

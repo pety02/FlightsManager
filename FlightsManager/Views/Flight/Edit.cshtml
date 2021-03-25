@@ -1,0 +1,72 @@
+﻿@model FlightsManager.Models.Web.Flights.EditFlightViewModel
+@{
+    ViewData["Title"] = "Edit";
+    var locFrom = ViewData["locationFrom"] as FlightsManager.Models.Data.Address;
+    var locTo = ViewData["locationTo"] as FlightsManager.Models.Data.Address;
+    var plane = ViewData["plane"] as FlightsManager.Models.Data.Plane;
+
+    FlightsManager.Models.Data.FlightsManagerContext ctx = new FlightsManager.Models.Data.FlightsManagerContext();
+    List<FlightsManager.Models.Data.Address> addrs = ctx.Addresses.Where(a => a.Id == 2).ToList();
+    List<FlightsManager.Models.Data.Plane> planes = ctx.Planes.ToList();
+    List<int> addrsFromIds = new List<int>();
+    List<int> addrsToIds = new List<int>();
+    List<int> planesIds = new List<int>();
+
+    List<string> addrsFromNames = new List<string>();
+    List<string> addrsToNames = new List<string>();
+    List<string> planesNames = new List<string>();
+    foreach (FlightsManager.Models.Data.Address item in addrs)
+    {
+        addrsFromIds.Add(item.Id);
+        addrsFromNames.Add(ctx.LivingPlaces.Find(item.LivingPlaceId).Name + ", " + ctx.Countries.Find(item.CountryId).Name);
+
+        addrsToIds.Add(item.Id);
+        addrsToNames.Add(ctx.LivingPlaces.Find(item.LivingPlaceId).Name + ", " + ctx.Countries.Find(item.CountryId).Name);
+    }
+    foreach (FlightsManager.Models.Data.Plane item2 in planes)
+    {
+        planesIds.Add(item2.Id);
+        planesNames.Add(item2.UniquePlaneNumber);
+    }
+}
+
+<h2>Edit Flight</h2>
+<form method="post" asp-controller="Flight" asp-action="Edit">
+    <p>Location From</p>
+    <select>
+        @{ 
+            for (int i = 0; i < addrsFromIds.Count; i++)
+            {
+                <option value=@addrsFromIds[i]>@addrsFromNames[i]</option>
+            }
+        }
+    </select>
+    <p>Location To</p>
+    <select>
+        @{
+            for (int i = 0; i < addrsToIds.Count; i++)
+            {
+                <option value=@addrsToIds[i]>@addrsToNames[i]</option>
+            }
+        }
+    </select>
+    <p>Take Off Date</p>
+    <input type="datetime"/>
+    <p>Landing Date</p>
+    <input type="datetime" />
+    <p>Plane</p>
+    <select>
+        @{
+            for (int i = 0; i < planes.Count; i++)
+            {
+                <option value=@planesIds[i]>@planesNames[i]</option>
+            }
+        }
+    </select>
+    <input type="submit" value="Edit" class="btn btn-primary" />
+    <a href="../FlightController/AdminIndex"></a>
+</form>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
