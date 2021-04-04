@@ -1,12 +1,8 @@
-﻿@model FlightsManager.Models.Web.Flights.EditFlightViewModel
+﻿@model FlightsManager.Models.Web.Flights.AddFlightViewModel
 @{
-    ViewData["Title"] = "Edit";
-    var plane = ViewData["plane"] as FlightsManager.Models.Data.Plane;
-    var flight = ViewData["flight"] as FlightsManager.Models.Data.Flight;
-
+    ViewData["Title"] = "Create";
+    
     FlightsManager.Models.Data.FlightsManagerContext ctx = new FlightsManager.Models.Data.FlightsManagerContext();
-    string locFrom = ctx.LivingPlaces.Find(ctx.Addresses.Find(flight.LocationFromId).LivingPlaceId).Name + ", " + ctx.Countries.Find(ctx.Addresses.Find(flight.LocationFromId).CountryId).Name;
-    string locTo = ctx.LivingPlaces.Find(ctx.Addresses.Find(flight.LocationToId).LivingPlaceId).Name + ", " + ctx.Countries.Find(ctx.Addresses.Find(flight.LocationToId).CountryId).Name;
     List<FlightsManager.Models.Data.Address> addrs = ctx.Addresses.Where(a => a.Id == 2).ToList();
     List<FlightsManager.Models.Data.Plane> planes = ctx.Planes.ToList();
     List<int> addrsFromIds = new List<int>();
@@ -31,11 +27,10 @@
     }
 
     List<FlightsManager.Models.Data.Plane> allPlanes = ViewData["allPlanes"] as List<FlightsManager.Models.Data.Plane>;
-    var duration = (flight.LandingDateTime - flight.TakeOffDateTime).TotalMinutes + " mins";
 }
 
-<h2>Edit Flight</h2>
-<form method="post" class="container-fluid" asp-controller="Flight" asp-action="Edit">
+<h2>Create Flight</h2>
+<form method="post" class="container-fluid" asp-controller="Flight" asp-action="Create">
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
     <table class="table">
         <thead>
@@ -44,27 +39,13 @@
                     <p>Flight Information</p>
                 </th>
             </tr>
-            <tr class="d-table-row">
-                <th class="table-active col-6">
-                    <p>Information</p>
-                </th>
-                <th class="table-active col-6">
-                    <p>Edited Information</p>
-                </th>
-            </tr>
         </thead>
         <tbody>
             <tr class="d-table-row">
-                <th class="table-active col-3">
+                <th class="table-active col-6">
                     <p>Location From</p>
                 </th>
-                <td class="col-3">
-                    <p>@locFrom</p>
-                </td>
-                <th class="table-active col-3">
-                    <p>Location From</p>
-                </th>
-                <td class="col-3">
+                <td class="col-6">
                     <select asp-for="LocationFromId" class="form-control required-fields">
                         @{
                             for (int i = 0; i < addrsFromIds.Count; i++)
@@ -77,16 +58,10 @@
                 </td>
             </tr>
             <tr class="d-table-row">
-                <th class="table-active col-3">
+                <th class="table-active col-6">
                     <p>Location To</p>
                 </th>
-                <td class="col-3">
-                    <p>@locTo</p>
-                </td>
-                <th class="table-active col-3">
-                    <p>Location To</p>
-                </th>
-                <td class="col-3">
+                <td class="col-6">
                     <select asp-for="LocationToId" class="form-control required-fields">
                         @{
                             for (int i = 0; i < addrsToIds.Count; i++)
@@ -99,46 +74,28 @@
                 </td>
             </tr>
             <tr class="d-table-row">
-                <th class="table-active col-3">
+                <th class="table-active col-6">
                     <p>Take Off Date</p>
                 </th>
-                <td class="col-3">
-                    <p>@flight.TakeOffDateTime.ToShortDateString()</p>
-                </td>
-                <th class="table-active col-3">
-                    <p>Take Off Date</p>
-                </th>
-                <td class="col-3">
+                <td class="col-6">
                     <input asp-for="TakeOffDateTime" class="form-control required-fields" type="datetime-local" />
                     <span asp-validation-for="TakeOffDateTime" class="text-danger"></span>
                 </td>
             </tr>
             <tr class="d-table-row">
-                <th class="table-active col-3">
-                    <p>Duration</p>
-                </th>
-                <td class="col-3">
-                    <p>@duration</p>
-                </td>
-                <th class="table-active col-3">
+                <th class="table-active col-6">
                     <p>Landing Date</p>
                 </th>
-                <td class="col-3">
+                <td class="col-6">
                     <input asp-for="LandingDateTime" class="form-control required-fields" type="datetime-local" />
                     <span asp-validation-for="LandingDateTime" class="text-danger"></span>
                 </td>
             </tr>
             <tr class="d-table-row">
-                <th class="table-active col-3">
+                <th class="table-active col-6">
                     <p>Plane Unique Number</p>
                 </th>
-                <td class="col-3">
-                    <p>@plane.UniquePlaneNumber</p>
-                </td>
-                <th class="table-active col-3">
-                    <p>Plane Unique Number</p>
-                </th>
-                <td class="col-3">
+                <td class="col-6">
                     <select>
                         @{
                             for (int i = 0; i < allPlanes.Count; i++)
@@ -153,7 +110,7 @@
         </tbody>
     </table>
     <div class="form-group">
-        <input type="submit" value="Edit" class="btn btn-primary" />
+        <input type="submit" value="Create" class="btn btn-primary" />
         <a type="button" name="backToAllFlightsBtn" class="btn btn-light" asp-area="" asp-controller="Flight" asp-action="AdminIndex">Back</a>
     </div>
 </form>

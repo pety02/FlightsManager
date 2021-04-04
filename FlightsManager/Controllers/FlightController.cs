@@ -97,6 +97,10 @@ namespace FlightsManager.Controllers
         public IActionResult Create()
         {
             AddFlightViewModel model = new AddFlightViewModel();
+
+            List<Plane> planes = (from p in _context.Planes select p).ToList();
+            ViewData["allPlanes"] = planes;
+
             return View(model);
         }
 
@@ -104,6 +108,7 @@ namespace FlightsManager.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(AddFlightViewModel model)
         {
+            
             if (ModelState.IsValid)
             {
                 Flight flight = new Flight
@@ -147,6 +152,14 @@ namespace FlightsManager.Controllers
                 PlaneId = flight.PlaneId
             };
 
+            List<Plane> planes = (from p in _context.Planes select p).ToList();
+
+            ViewData["locationFrom"] = _context.Addresses.Find(flight.LocationFromId);
+            ViewData["locationTo"] = _context.Addresses.Find(flight.LocationToId);
+            ViewData["plane"] = _context.Planes.Find(flight.PlaneId);
+            ViewData["flight"] = _context.Flights.Find(flight.Id);
+            ViewData["allPlanes"] = planes;
+
             return View(model);
         }
 
@@ -166,13 +179,9 @@ namespace FlightsManager.Controllers
                     PlaneId = model.PlaneId
                 };
 
-                ViewData["locationFrom"] = _context.Addresses.Find(flight.LocationFromId);
-                ViewData["locationTo"] = _context.Addresses.Find(flight.LocationToId);
-                ViewData["plane"] = _context.Planes.Find(flight.PlaneId);
-
                 try
                 {
-                    _context.Update(flight);
+                    _context.Update(model);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
