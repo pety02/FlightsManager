@@ -169,7 +169,7 @@ namespace FlightsManager.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(EditFlightViewModel model)
         {
-            if (!ModelState.IsValid)
+            if (ModelState.IsValid)
             {
                 Flight flight = new Flight
                 {
@@ -183,7 +183,7 @@ namespace FlightsManager.Controllers
 
                 try
                 {
-                    _context.Update(model);
+                    _context.Update(flight);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)

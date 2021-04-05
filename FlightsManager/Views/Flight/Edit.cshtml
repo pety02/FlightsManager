@@ -139,7 +139,7 @@
                     <p>Plane Unique Number</p>
                 </th>
                 <td class="col-3">
-                    <select>
+                    <select asp-for="PlaneId" class="form-control required-fields">
                         @{
                             for (int i = 0; i < allPlanes.Count; i++)
                             {

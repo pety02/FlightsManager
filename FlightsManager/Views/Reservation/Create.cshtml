@@ -1,0 +1,274 @@
+﻿@{
+    ViewData["Title"] = "Login";
+
+    FlightsManager.Models.Data.FlightsManagerContext ctx = new FlightsManager.Models.Data.FlightsManagerContext();
+    int reservationId = ctx.Reservations.Max(r => r.Id) + 1;
+    string reservationDate = DateTime.Now.ToShortDateString();
+
+    DateTime takeOffDate = DateTime.Today;
+    DateTime landingDate = DateTime.Today;
+
+    List<FlightsManager.Models.Data.Address> addrs = ctx.Addresses.Where(a => a.Id == 2).ToList();
+    List<int> addrsFromIds = new List<int>();
+    List<int> addrsToIds = new List<int>();
+
+    List<string> addrsFromNames = new List<string>();
+    List<string> addrsToNames = new List<string>();
+
+    foreach (FlightsManager.Models.Data.Address item in addrs)
+    {
+        addrsFromIds.Add(item.Id);
+        addrsFromNames.Add(ctx.LivingPlaces.Find(item.LivingPlaceId).Name + ", " + ctx.Countries.Find(item.CountryId).Name);
+
+        addrsToIds.Add(item.Id);
+        addrsToNames.Add(ctx.LivingPlaces.Find(item.LivingPlaceId).Name + ", " + ctx.Countries.Find(item.CountryId).Name);
+    }
+
+    List<FlightsManager.Models.Data.Plane> planes = ctx.Planes.ToList();
+    List<FlightsManager.Models.Data.Employee> pilots = (from p in ctx.Employees where p.RoleId == 2 select p).ToList();
+    List<FlightsManager.Models.Data.Nationality> nationalities = (from n in ctx.Nationalities select n).ToList();
+    List<FlightsManager.Models.Data.TicketType> ticketTypes = (from t in ctx.TicketTypes select t).ToList();
+}
+
+<form class="container container-fluid form">
+    <table class="table" id="resTbl">
+        <thead>
+            <tr class="d-table-row">
+                <th class="table-active col-3">
+                    <p>Reservation Number</p>
+                </th>
+                <td class="col-3">
+                    <p>@reservationId</p>
+                </td>
+                <th class="table-active col-3">
+                    <p>Reservation Date</p>
+                </th>
+                <td class="col-3">
+                    <p>@reservationDate</p>
+                </td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr class="d-table-row">
+                <th class="table-active col-2" rowspan="2">
+                    <p>Flight</p>
+                </th>
+                <th class="table-active col-2">
+                    <p>Location From</p>
+                </th>
+                <th class="table-active col-2">
+                    <p>Location To</p>
+                </th>
+                <th class="table-active col-2">
+                    <p>Take Off Date</p>
+                </th>
+                <th class="table-active col-2">
+                    <p>Landing Date</p>
+                </th>
+                <th class="table-active col-2">
+                    <p>Duration</p>
+                </th>
+            </tr>
+            <tr class="d-table-row">
+                <td class="col-2">
+                    <select class="form-control required-fields">
+                        @{
+                            for (int i = 0; i < addrsFromIds.Count; i++)
+                            {
+                                <option value=@addrsFromIds[i]>@addrsFromNames[i]</option>
+                            }
+                        }
+                    </select>
+                    <span class="text-danger"></span>
+                </td>
+                <td class="col-2">
+                    <select class="form-control required-fields">
+                        @{
+                            for (int i = 0; i < addrsFromIds.Count; i++)
+                            {
+                                <option value=@addrsFromIds[i]>@addrsFromNames[i]</option>
+                            }
+                        }
+                    </select>
+                    <span class="text-danger"></span>
+                </td>
+                <td class="col-2">
+                    <input id="d1" type="datetime-local" value=@takeOffDate onchange="getDuration();" />
+                </td>
+                <td class="col-2">
+                    <input id="d2" type="datetime-local" value=@takeOffDate getDuration(); />
+                </td>
+                <td class="col-2">
+                    @{string duration = (landingDate - takeOffDate).TotalMinutes + " mins.";}
+                    <p>@duration</p>
+                </td>
+            </tr>
+            <tr class="d-table-row">
+                <th class="table-active col-3" rowspan="2">
+                    <p>Plane</p>
+                </th>
+                <th class="table-active col-3">
+                    <p>Plane Type</p>
+                </th>
+                <th class="table-active col-3">
+                    <p>Unique Plane Number</p>
+                </th>
+                <th class="table-active col-3">
+                    <p>Pilot Name</p>
+                </th>
+            </tr>
+            <tr class="d-table-row">
+                <td class="col-3">
+                    <p>Airliner</p>
+                </td>
+                <td class="col-3">
+                    <select class="form-control required-fields">
+                        @{
+                            for (int i = 0; i < planes.Count; i++)
+                            {
+                                <option value=@planes[i].Id>@planes[i].UniquePlaneNumber</option>
+                            }
+                        }
+                    </select>
+                    <span class="text-danger"></span>
+                </td>
+                <td>
+                    <select class="form-control required-fields">
+                        @{
+                            for (int i = 0; i < pilots.Count; i++)
+                            {
+                                string pilotName = pilots[i].Name + " " + pilots[i].Family;
+                                <option value=@pilots[i].Id>@pilotName</option>
+                            }
+                        }
+                    </select>
+                    <span class="text-danger"></span>
+                </td>
+                <td class="col-3"></td>
+            </tr>
+            <tr class="d-table-row">
+                <th class="table-active col-2" rowspan="2">
+                    <p>Personal Information</p>
+                    <!--<button type="button" class="btn btn-info" onclick="addNewPassagerInputs();">Add</button>-->
+                </th>
+                <th class="table-active col-2">
+                    <p>First Name</p>
+                </th>
+                <th class="table-active col-2">
+                    <p>Second Name</p>
+                </th>
+                <th class="table-active col-2">
+                    <p>Last Name</p>
+                </th>
+                <th class="table-active col-2">
+                    <p>PIN</p>
+                </th>
+                <th class="table-active col-2">
+                    <p>Nationality</p>
+                </th>
+            </tr>
+            <tr id="pInfRow" class="d-table-row">
+                <td class="col-2">
+                    <input type="text" placeholder="First Name" />
+                </td>
+                <td class="col-2">
+                    <input type="text" placeholder="Second Name" />
+                </td>
+                <td class="col-2">
+                    <input type="text" placeholder="Last Name" />
+                </td>
+                <td class="col-2">
+                    <input type="text" placeholder="Personal Identification Number" />
+                </td>
+                <td class="col-2" id="nat">
+                    <select class="form-control required-fields">
+                        @{
+                            for (int i = 0; i < nationalities.Count; i++)
+                            {
+                                <option value=@nationalities[i].Id>@nationalities[i].Name</option>
+                            }
+                        }
+                    </select>
+                    <span class="text-danger"></span>
+                </td>
+            </tr>
+            <tr class="d-table-row">
+                <th class="table-active col-4" rowspan="2">
+                    <p>Feedback</p>
+                </th>
+                <th class="table-active col-4">
+                    <p>PhoneNumber</p>
+                </th>
+                <th class="table-active col-4">
+                    <p>Email</p>
+                </th>
+            </tr>
+            <tr class="d-table-row">
+                <td class="col-4">
+                    <input type="text" placeholder="Phone Number" />
+                </td>
+                <td class="col-4">
+                    <input type="text" placeholder="Email" />
+                </td>
+            </tr>
+            <tr class="d-table-row">
+                <th class="table-active col-12">
+                    <p>Tickets</p>
+                </th>
+            </tr>
+            <tr class="d-table-row">
+                <th class="table-active col-3">
+                    <p>Ticket Type</p>
+                </th>
+                <th class="table-active col-3">
+                    <p>Ticket Price</p>
+                </th>
+                <th class="table-active col-3">
+                    <p>Ticket Count</p>
+                </th>
+                <th class="table-active col-3">
+                    <p>Total Price</p>
+                </th>
+            </tr>
+            <tr class="d-table-row">
+                <td class="col-3">
+                    <select class="form-control required-fields">
+                        @{
+                            for (int i = 0; i < ticketTypes.Count; i++)
+                            {
+                                <option value=@ticketTypes[i].Id>@ticketTypes[i].Name</option>
+                            }
+                        }
+                    </select>
+                    <span class="text-danger"></span>
+                </td>
+                <td class="col-3">
+                    <p>price</p>
+                </td>
+                <td class="col-3">
+                    <p>count</p>
+                </td>
+                <td class="col-3">
+                    <p>total price</p>
+                </td>
+            </tr>
+            <tr class="d-table-row">
+                <td class="col-6">
+                    <button type="button" class="btn btn-info">Cancel</button>
+                </td>
+                <td class="col-6">
+                    <button type="button" class="btn btn-info">Reserve</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <!--<h4>Extra Passagers</h4>
+    <div id="extrPassagers">
+
+    </div>
+    <br />-->
+</form>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
