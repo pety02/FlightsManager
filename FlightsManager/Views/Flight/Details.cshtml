@@ -3,50 +3,51 @@
     var flight = ViewData["Flight"] as FlightsManager.Models.Data.Flight;
     var locationFrom = ViewData["LocationFrom"] as string;
     var locationTo = ViewData["LocationTo"] as string;
-    var duration = (flight.LandingDateTime - flight.TakeOffDateTime).TotalMinutes;
+    var duration = (flight.LandingDateTime - flight.TakeOffDateTime).TotalMinutes + " mins.";
 
     var passagersNames = ViewData["passagers"] as string;
 }
 <h1>Flight Information</h1>
-<table>
-    <tr>
+<table class="table">
+    <tr class="d-table-row">
+        <th class="table-active">
+            <p>Location From:</p>
+        </th>
         <td>
-            Location From:
-        </td>
-        <td>
-            @locationFrom
-        </td>
-    </tr>
-    <tr>
-        <td>
-            Location To:
-        </td>
-        <td>
-            @locationTo
+            <p>@locationFrom</p>
         </td>
     </tr>
     <tr>
+        <th class="table-active">
+            <p>Location To:</p>
+        </th>
         <td>
-            Take Off Date:
-        </td>
-        <td>
-            @flight.TakeOffDateTime
-        </td>
-    </tr>
-    <tr>
-        <td>
-            Duration:
-        </td>
-        <td>
-            @duration min.
+            <p>@locationTo</p>
         </td>
     </tr>
     <tr>
+        <th class="table-active">
+            <p>Take Off Date:</p>
+        </th>
         <td>
-            Passagers:
+            <p>@flight.TakeOffDateTime</p>
         </td>
+    </tr>
+    <tr>
+        <th class="table-active">
+            <p>Duration:</p>
+        </th>
         <td>
-            @passagersNames
+            <p>@duration</p>
+        </td>
+    </tr>
+    <tr>
+        <th class="table-active">
+            <p>Passagers:</p>
+        </th>
+        <td>
+            <p>@passagersNames</p>
         </td>
     </tr>
 </table>
+<a type="button" name="backToAllFlightsBtn" class="btn btn-light" asp-area="" asp-controller="Flight" asp-action="Index">Back</a>

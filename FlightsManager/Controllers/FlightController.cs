@@ -84,14 +84,14 @@ namespace FlightsManager.Controllers
                 List<Employee> employees = await (from emp in _context.Employees where emp.Id == employeeId select emp).ToListAsync();
                 Employee employee = employees[0];
                 ViewData["isLoggedIn"] = true;
+                return RedirectToAction(nameof(AdminIndex));
             }
             else
             {
                 ViewData["isLoggedIn"] = false;
+                return View(model);
             }
             ///////////////////////////////////////////////////////////////
-
-            return View(model);
         }
 
         public IActionResult Create()
@@ -111,8 +111,10 @@ namespace FlightsManager.Controllers
             
             if (ModelState.IsValid)
             {
+                int id = _context.Flights.Max(f => f.Id);
                 Flight flight = new Flight
                 {
+                    Id = id + 1,
                     LocationFromId = model.LocationFromId,
                     LocationToId = model.LocationToId,
                     TakeOffDateTime = model.TakeOffDateTime,
@@ -206,6 +208,7 @@ namespace FlightsManager.Controllers
         {
             Flight flight = await _context.Flights.FindAsync(id);
             _context.Flights.Remove(flight);
+            await _context.SaveChangesAsync();
 
             return RedirectToAction(nameof(Index));
         }
