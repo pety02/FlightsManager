@@ -8,9 +8,7 @@
 
     FlightsManager.Models.Data.FlightsManagerContext _context = new FlightsManager.Models.Data.FlightsManagerContext();
 }
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
+
 <table class="table">
     <thead>
         <tr>
@@ -32,23 +30,26 @@
     <tbody>
         @foreach (var item in Model.Items)
         {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => _context.LivingPlaces.Find(_context.Addresses.Find(item.LocationFromId).LivingPlaceId).Name), @Html.DisplayFor(modelItem => _context.Countries.Find(_context.Addresses.Find(item.LocationFromId).CountryId).Name)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => _context.LivingPlaces.Find(_context.Addresses.Find(item.LocationToId).LivingPlaceId).Name), @Html.DisplayFor(modelItem => _context.Countries.Find(_context.Addresses.Find(item.LocationToId).CountryId).Name)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.TakeOffDateTime)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.LandingDateTime)
-                </td>
-                <td>
-                    <a asp-action="Details" asp-route-id="@item.Id">Details</a>
-                </td>
-            </tr>
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => _context.LivingPlaces.Find(_context.Addresses.Find(item.LocationFromId).LivingPlaceId).Name), @Html.DisplayFor(modelItem => _context.Countries.Find(_context.Addresses.Find(item.LocationFromId).CountryId).Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => _context.LivingPlaces.Find(_context.Addresses.Find(item.LocationToId).LivingPlaceId).Name), @Html.DisplayFor(modelItem => _context.Countries.Find(_context.Addresses.Find(item.LocationToId).CountryId).Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TakeOffDateTime)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.LandingDateTime)
+            </td>
+            <td>
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a>
+            </td>
+            <td>
+                <a asp-action="Create" asp-controller="Reservation" asp-route-id="@item.Id">Reserve</a>
+            </td>
+        </tr>
         }
     </tbody>
     <ul class="pagination">

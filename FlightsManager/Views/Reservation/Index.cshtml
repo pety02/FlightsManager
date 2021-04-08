@@ -1,0 +1,62 @@
+﻿@model FlightsManager.Models.Web.Reservation.IndexReservationViewModel
+@{
+    bool isLoggedIn = (bool)ViewData["isLoggedIn"];
+    if (isLoggedIn)
+    {
+        <a type="button" asp-area="" asp-controller="Employee" asp-action="LogOut">LogOut</a>
+    }
+
+    FlightsManager.Models.Data.FlightsManagerContext _context = new FlightsManager.Models.Data.FlightsManagerContext();
+}
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Reservation Date
+            </th>
+            <th>
+                Location From
+            </th>
+            <th>
+                Location To
+            </th>
+            <th>
+                Passager Name
+            </th>
+            <th>
+                Passager Family
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Items)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem =>   item.ReservationDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => _context.Countries.Find(_context.Addresses.Find(_context.Flights.Find(_context.Tickets.Find(item.TicketId).FlightId).LocationFromId).CountryId).Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => _context.Countries.Find(_context.Addresses.Find(_context.Flights.Find(_context.Tickets.Find(item.TicketId).FlightId).LocationToId).CountryId).Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => _context.Passagers.Find((from r in _context.ReservationPassagers where r.ResrvationId == item.Id select r).First().PassagerId).FirstName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => _context.Passagers.Find((from r in _context.ReservationPassagers where r.ResrvationId == item.Id select r).First().PassagerId).LastName)
+                </td>
+            </tr>
+        }
+    </tbody>
+    <ul class="pagination">
+        @for (var i = 1; i <= Model.Pager.PagesCount; i++)
+        {
+            <li class="page-item @(i == Model.Pager.CurrentPage ? "active" : "")">
+                <a asp-route-Pager.CurrentPage="@i" class="page-link">@i</a>
+            </li>
+        }
+    </ul>
+</table>

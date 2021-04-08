@@ -1,36 +1,28 @@
-﻿@{
+﻿@model FlightsManager.Models.Web.Reservation.AddReservationViewModel
+@{
     ViewData["Title"] = "Login";
 
+    FlightsManager.Models.Data.Flight resFlight = ViewData["resevationFlight"] as FlightsManager.Models.Data.Flight;
+
     FlightsManager.Models.Data.FlightsManagerContext ctx = new FlightsManager.Models.Data.FlightsManagerContext();
+    string locFrom = ctx.LivingPlaces.Find(ctx.Addresses.Find(resFlight.LocationFromId).LivingPlaceId).Name + ", " + ctx.Countries.Find(ctx.Addresses.Find(resFlight.LocationFromId).CountryId).Name;
+    string locTo = ctx.LivingPlaces.Find(ctx.Addresses.Find(resFlight.LocationToId).LivingPlaceId).Name + ", " + ctx.Countries.Find(ctx.Addresses.Find(resFlight.LocationToId).CountryId).Name;
+
     int reservationId = ctx.Reservations.Max(r => r.Id) + 1;
     string reservationDate = DateTime.Now.ToShortDateString();
 
-    DateTime takeOffDate = DateTime.Today;
-    DateTime landingDate = DateTime.Today;
+    string upn = ctx.Planes.Find(resFlight.PlaneId).UniquePlaneNumber;
+    string pilotFullName = ctx.Employees.Find(ctx.Planes.Find(resFlight.PlaneId).PilotId).Name + " " + ctx.Employees.Find(ctx.Planes.Find(resFlight.PlaneId).PilotId).Family;
 
-    List<FlightsManager.Models.Data.Address> addrs = ctx.Addresses.Where(a => a.Id == 2).ToList();
-    List<int> addrsFromIds = new List<int>();
-    List<int> addrsToIds = new List<int>();
+    string takeOffDate = resFlight.TakeOffDateTime.ToShortDateString();
+    string landingDate = resFlight.LandingDateTime.ToShortDateString();
+    string duration = (resFlight.LandingDateTime - resFlight.TakeOffDateTime).TotalMinutes + " mins.";
 
-    List<string> addrsFromNames = new List<string>();
-    List<string> addrsToNames = new List<string>();
-
-    foreach (FlightsManager.Models.Data.Address item in addrs)
-    {
-        addrsFromIds.Add(item.Id);
-        addrsFromNames.Add(ctx.LivingPlaces.Find(item.LivingPlaceId).Name + ", " + ctx.Countries.Find(item.CountryId).Name);
-
-        addrsToIds.Add(item.Id);
-        addrsToNames.Add(ctx.LivingPlaces.Find(item.LivingPlaceId).Name + ", " + ctx.Countries.Find(item.CountryId).Name);
-    }
-
-    List<FlightsManager.Models.Data.Plane> planes = ctx.Planes.ToList();
-    List<FlightsManager.Models.Data.Employee> pilots = (from p in ctx.Employees where p.RoleId == 2 select p).ToList();
     List<FlightsManager.Models.Data.Nationality> nationalities = (from n in ctx.Nationalities select n).ToList();
-    List<FlightsManager.Models.Data.TicketType> ticketTypes = (from t in ctx.TicketTypes select t).ToList();
+    List<FlightsManager.Models.Data.TicketType> ticketType = (from t in ctx.TicketTypes select t).ToList();
 }
 
-<form class="container container-fluid form">
+<form method="post" asp-action="Create" class="container container-fluid form">
     <table class="table" id="resTbl">
         <thead>
             <tr class="d-table-row">
@@ -38,13 +30,13 @@
                     <p>Reservation Number</p>
                 </th>
                 <td class="col-3">
-                    <p>@reservationId</p>
+                    <p asp-for="Id" type="text" class="form-control required-fields">@reservationId</p>
                 </td>
                 <th class="table-active col-3">
                     <p>Reservation Date</p>
                 </th>
                 <td class="col-3">
-                    <p>@reservationDate</p>
+                    <p asp-for="ReservationDate" type="text" class="form-control required-fields">@reservationDate</p>
                 </td>
             </tr>
         </thead>
@@ -71,36 +63,29 @@
             </tr>
             <tr class="d-table-row">
                 <td class="col-2">
-                    <select class="form-control required-fields">
-                        @{
-                            for (int i = 0; i < addrsFromIds.Count; i++)
-                            {
-                                <option value=@addrsFromIds[i]>@addrsFromNames[i]</option>
-                            }
-                        }
-                    </select>
-                    <span class="text-danger"></span>
+                    <p>
+                        @locFrom
+                    </p>
                 </td>
                 <td class="col-2">
-                    <select class="form-control required-fields">
-                        @{
-                            for (int i = 0; i < addrsFromIds.Count; i++)
-                            {
-                                <option value=@addrsFromIds[i]>@addrsFromNames[i]</option>
-                            }
-                        }
-                    </select>
-                    <span class="text-danger"></span>
+                    <p>
+                        @locTo
+                    </p>
                 </td>
                 <td class="col-2">
-                    <input id="d1" type="datetime-local" value=@takeOffDate onchange="getDuration();" />
+                    <p>
+                        @takeOffDate
+                    </p>
                 </td>
                 <td class="col-2">
-                    <input id="d2" type="datetime-local" value=@takeOffDate getDuration(); />
+                    <p>
+                        @landingDate
+                    </p>
                 </td>
                 <td class="col-2">
-                    @{string duration = (landingDate - takeOffDate).TotalMinutes + " mins.";}
-                    <p>@duration</p>
+                    <p>
+                        @duration
+                    </p>
                 </td>
             </tr>
             <tr class="d-table-row">
@@ -119,32 +104,20 @@
             </tr>
             <tr class="d-table-row">
                 <td class="col-3">
-                    <p>Airliner</p>
+                    <p>
+                        Airliner
+                    </p>
                 </td>
                 <td class="col-3">
-                    <select class="form-control required-fields">
-                        @{
-                            for (int i = 0; i < planes.Count; i++)
-                            {
-                                <option value=@planes[i].Id>@planes[i].UniquePlaneNumber</option>
-                            }
-                        }
-                    </select>
-                    <span class="text-danger"></span>
+                    <p>
+                        @upn
+                    </p>
                 </td>
-                <td>
-                    <select class="form-control required-fields">
-                        @{
-                            for (int i = 0; i < pilots.Count; i++)
-                            {
-                                string pilotName = pilots[i].Name + " " + pilots[i].Family;
-                                <option value=@pilots[i].Id>@pilotName</option>
-                            }
-                        }
-                    </select>
-                    <span class="text-danger"></span>
+                <td class="col-3">
+                    <p>
+                       @pilotFullName
+                    </p>
                 </td>
-                <td class="col-3"></td>
             </tr>
             <tr class="d-table-row">
                 <th class="table-active col-2" rowspan="2">
@@ -169,19 +142,27 @@
             </tr>
             <tr id="pInfRow" class="d-table-row">
                 <td class="col-2">
-                    <input type="text" placeholder="First Name" />
+                    <input asp-for="FirstName" class="form-control required-fields" type="text" placeholder="First Name" />
+                    <span class="text-danger required-fields-symbol">*</span><br />
+                    <span asp-validation-for="FirstName" class="text-danger"></span>
                 </td>
                 <td class="col-2">
-                    <input type="text" placeholder="Second Name" />
+                    <input asp-for="SecondName" class="form-control required-fields" type="text" placeholder="Second Name" />
+                    <span class="text-danger required-fields-symbol">*</span><br />
+                    <span asp-validation-for="SecondName" class="text-danger"></span>
                 </td>
                 <td class="col-2">
-                    <input type="text" placeholder="Last Name" />
+                    <input asp-for="LastName" class="form-control required-fields" type="text" placeholder="Last Name" />
+                    <span class="text-danger required-fields-symbol">*</span><br />
+                    <span asp-validation-for="LastName" class="text-danger"></span>
                 </td>
                 <td class="col-2">
-                    <input type="text" placeholder="Personal Identification Number" />
+                    <input asp-for="EGN" class="form-control required-fields" type="text" placeholder="Personal Identification Number" />
+                    <span class="text-danger required-fields-symbol">*</span><br />
+                    <span asp-validation-for="EGN" class="text-danger"></span>
                 </td>
                 <td class="col-2" id="nat">
-                    <select class="form-control required-fields">
+                    <select asp-for="NationalityId" class="form-control required-fields" class="form-control required-fields">
                         @{
                             for (int i = 0; i < nationalities.Count; i++)
                             {
@@ -189,7 +170,8 @@
                             }
                         }
                     </select>
-                    <span class="text-danger"></span>
+                    <span class="text-danger required-fields-symbol">*</span><br />
+                    <span asp-validation-for="NationalityId" class="text-danger"></span>
                 </td>
             </tr>
             <tr class="d-table-row">
@@ -205,10 +187,14 @@
             </tr>
             <tr class="d-table-row">
                 <td class="col-4">
-                    <input type="text" placeholder="Phone Number" />
+                    <input asp-for="PhoneNumber" class="form-control required-fields" type="text" placeholder="Phone Number" />
+                    <span class="text-danger required-fields-symbol">*</span><br />
+                    <span asp-validation-for="PhoneNumber" class="text-danger"></span>
                 </td>
                 <td class="col-4">
-                    <input type="text" placeholder="Email" />
+                    <input asp-for="Email" class="form-control required-fields" type="text" placeholder="Email" />
+                    <span class="text-danger required-fields-symbol">*</span><br />
+                    <span asp-validation-for="Email" class="text-danger"></span>
                 </td>
             </tr>
             <tr class="d-table-row">
@@ -221,9 +207,6 @@
                     <p>Ticket Type</p>
                 </th>
                 <th class="table-active col-3">
-                    <p>Ticket Price</p>
-                </th>
-                <th class="table-active col-3">
                     <p>Ticket Count</p>
                 </th>
                 <th class="table-active col-3">
@@ -232,32 +215,29 @@
             </tr>
             <tr class="d-table-row">
                 <td class="col-3">
-                    <select class="form-control required-fields">
+                    <select asp-for="TicketTypeId">
                         @{
-                            for (int i = 0; i < ticketTypes.Count; i++)
+                            for (int j = 0; j < ticketType.Count; j++)
                             {
-                                <option value=@ticketTypes[i].Id>@ticketTypes[i].Name</option>
+                                
+                                <option value=@ticketType[j].Id>@ticketType[j].Name</option>
                             }
                         }
                     </select>
-                    <span class="text-danger"></span>
                 </td>
                 <td class="col-3">
-                    <p>price</p>
+                    <p>1</p>
                 </td>
                 <td class="col-3">
-                    <p>count</p>
-                </td>
-                <td class="col-3">
-                    <p>total price</p>
+                    <p>-</p>
                 </td>
             </tr>
             <tr class="d-table-row">
                 <td class="col-6">
-                    <button type="button" class="btn btn-info">Cancel</button>
+                    <a href="/Flight/Index" class="btn btn-info">Cancel</a>
                 </td>
                 <td class="col-6">
-                    <button type="button" class="btn btn-info">Reserve</button>
+                    <input type="submit" value="Create" class="btn btn-info" />
                 </td>
             </tr>
         </tbody>

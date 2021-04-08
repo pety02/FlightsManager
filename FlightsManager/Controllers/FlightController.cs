@@ -44,17 +44,39 @@ namespace FlightsManager.Controllers
             if (HttpContext.Session.TryGetValue("empId", out empIdBytes))
             {
                 int employeeId = int.Parse(Encoding.UTF8.GetString(empIdBytes));
-                List<Employee> employees = await (from emp in _context.Employees where emp.Id == employeeId select emp).ToListAsync();
-                Employee employee = employees[0];
-                ViewData["isLoggedIn"] = true;
+                if (employeeId == 1)
+                {
+                    List<Employee> employees = await (from emp in _context.Employees where 
+                                                      emp.Id == employeeId select emp).ToListAsync();
+                    Employee employee = employees[0];
+                    ViewData["isLoggedIn"] = true;
+                    ViewData["isAdmin"] = true;
+
+                    return View(model);
+                }
+                else if(employeeId != 1 && employeeId > 0)
+                {
+                    List<Employee> employees = await (from emp in _context.Employees 
+                                                      where emp.Id == employeeId select emp).ToListAsync();
+                    Employee employee = employees[0];
+                    ViewData["isLoggedIn"] = true;
+                    ViewData["isAdmin"] = false;
+
+                    return RedirectToAction(nameof(Index));
+                }
+                else
+                {
+                    return RedirectToAction(nameof(Index));
+                }
             }
             else
             {
                 ViewData["isLoggedIn"] = false;
+                ViewData["isAdmin"] = false;
+
+                return RedirectToAction(nameof(Index));
             }
             ///////////////////////////////////////////////////////////////
-
-            return View(model);
         }
 
         public async Task<IActionResult> Index(IndexFlightViewModel model)
@@ -122,7 +144,7 @@ namespace FlightsManager.Controllers
                     PlaneId = model.PlaneId
                 };
 
-                _context.Add(flight);
+                _context.Flights.Add(flight);
                 await _context.SaveChangesAsync();
 
                 return RedirectToAction(nameof(Index));
@@ -263,7 +285,7 @@ namespace FlightsManager.Controllers
             return isExists;
         }
 
-        [NonAction]
+        /*[NonAction]
         private async Task<bool> IsLoggedIn(int empId) 
         {
             byte[] empIdBytes = new byte[200];
@@ -278,6 +300,6 @@ namespace FlightsManager.Controllers
             {
                 return false;
             }
-        }
+        }*/
     }
 }

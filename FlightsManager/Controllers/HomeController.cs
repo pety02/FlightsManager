@@ -20,7 +20,7 @@ namespace FlightsManager.Controllers
 
         public IActionResult Reservations()
         {
-            return View();
+            return RedirectToAction("Index", "Reservation");
         }
 
         public IActionResult Flights()

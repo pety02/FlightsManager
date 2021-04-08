@@ -1,0 +1,283 @@
+﻿@model FlightsManager.Models.Data.Reservation
+@{
+    string rId = ViewData["_resId"] as string;
+    string rDate = ViewData["_resDate"] as string;
+    string lf = ViewData["_locFrom"] as string;
+    string lt = ViewData["_locTo"] as string;
+    string d1 = ViewData["_takeOffD"] as string;
+    string d2 = ViewData["_landingD"] as string;
+    string dur = ViewData["_duration"] as string;
+    string plT = ViewData["_plType"] as string;
+    string upn = ViewData["_upn"] as string;
+    string pilot = ViewData["_pilot"] as string;
+    string fnm = ViewData["_fnm"] as string;
+    string snm = ViewData["_snm"] as string;
+    string lnm = ViewData["_lnm"] as string;
+    string egn = ViewData["_egn"] as string;
+    string nat = ViewData["_nat"] as string;
+    string phNum = ViewData["_phNum"] as string;
+    //string mail = ViewData["_mail"] as string;
+    string tickT = ViewData["_tickType"] as string;
+    string pr = ViewData["_tickPr"] as string;
+    string cnt = ViewData["_tickCnt"] as string;
+    string totPr = ViewData["_totalPr"] as string;
+}
+<h1>Reservation Information</h1>
+
+<table class="table">
+    <tr>
+        <th>
+            Reservation No:
+        </th>
+        <td>
+            <p>
+                @rId
+            </p>
+        </td>
+        <th>
+            Reservation Date:
+        </th>
+        <td>
+            <p>
+                @rDate
+            </p>
+        </td>
+    </tr>
+</table>
+<hr />
+
+<table class="table">
+    <tr>
+        <th>
+            Flight:
+        </th>
+    </tr>
+    <tr>
+        <th>
+            Location From:
+        </th>
+        <td>
+            <p>
+                @lf
+            </p>
+        </td>
+    </tr>
+    <tr>
+        <th>
+           Location To: 
+        </th>
+        <td>
+            <p>
+                @lt
+            </p>
+        </td>
+    </tr>
+    <tr>
+        <th>
+            Take Off Date:
+        </th>
+        <td>
+            <p>
+                @d1
+            </p>
+        </td>
+    </tr>
+    <tr>
+        <th>
+            Landing Date:
+        </th>
+        <td>
+            <p>
+                @d2
+            </p>
+        </td>
+    </tr>
+    <tr>
+        <th>
+           Duration:
+        </th>
+        <td>
+            <p>
+                @dur
+            </p>
+        </td>
+    </tr>
+</table>
+<hr />
+
+<table class="table">
+    <tr>
+        <th>
+            Plane:
+        </th>
+    </tr>
+    <tr>
+        <th>
+            Plane Type:
+        </th>
+        <td>
+            <p>
+                @plT
+            </p>
+        </td>
+    </tr>
+    <tr>
+        <th>
+            Unique Plane Number:
+        </th>
+        <td>
+            <p>
+                @upn
+            </p>
+        </td>
+    </tr>
+    <tr>
+        <th>
+            Pilot Full Name:
+        </th>
+        <td>
+            <p>
+                @pilot
+            </p>
+        </td>
+    </tr>
+</table>
+<hr />
+
+<table class="table">
+    <tr>
+        <th>
+            Personal Information:
+        </th>
+    </tr>
+    <tr>
+        <th>
+            First Name:
+        </th>
+        <td>
+            <p>
+                @fnm
+            </p>
+        </td>
+    </tr>
+    <tr>
+        <th>
+            Second Name:
+        </th>
+        <td>
+            <p>
+                @snm
+            </p>
+        </td>
+    </tr>
+    <tr>
+        <th>
+            Last Name:
+        </th>
+        <td>
+            <p>
+                @lnm
+            </p>
+        </td>
+    </tr>
+    <tr>
+        <th>
+            Personal Identification Number:
+        </th>
+        <td>
+            <p>
+                @egn
+            </p>
+        </td>
+    </tr>
+    <tr>
+        <th>
+            Nationality:
+        </th>
+        <td>
+            <p>
+                @nat
+            </p>
+        </td>
+    </tr>
+</table>
+<hr />
+
+<table class="table">
+    <tr>
+        <th>
+            Client Feedback:
+        </th>
+    </tr>
+    <tr>
+        <th>
+            Phone Number:
+        </th>
+        <td>
+            <p>
+                @phNum
+            </p>
+        </td>
+    </tr>
+    <tr>
+        <th>
+            Email:
+        </th>
+        <td>
+            <p>
+                -
+            </p>
+        </td>
+    </tr>
+</table>
+<hr />
+
+<table class="table">
+    <tr>
+        <th>
+            Ticket:
+        </th>
+    </tr>
+    <tr>
+        <th>
+            Ticket Type:
+        </th>
+        <td>
+            <p>
+                @tickT
+            </p>
+        </td>
+    </tr>
+    <tr>
+        <th>
+            Ticket Price:
+        </th>
+        <td>
+            <p>
+                @pr
+            </p>
+        </td>
+    </tr>
+    <tr>
+        <th>
+            Count:
+        </th>
+        <td>
+            <p>
+                @cnt
+            </p>
+        </td>
+    </tr>
+    <tr>
+        <th>
+            Total Price:
+        </th>
+        <td>
+            <p>
+                @totPr
+            </p>
+        </td>
+    </tr>
+</table>
+
+<a type="button" name="backToAllFlightsBtn" class="btn btn-light" asp-area="" asp-controller="Reservation" asp-action="Index">Back</a>

@@ -35,6 +35,7 @@ namespace FlightsManager.Models.Data
         public virtual DbSet<PlaneType> PlaneTypes { get; set; }
         public virtual DbSet<Reservation> Reservations { get; set; }
         public virtual DbSet<ReservationPassager> ReservationPassagers { get; set; }
+        public virtual DbSet<Reservation_Confirmation> ReservationConfirmations { get; set; }
         public virtual DbSet<Street> Streets { get; set; }
         public virtual DbSet<Ticket> Tickets { get; set; }
         public virtual DbSet<TicketType> TicketTypes { get; set; }
