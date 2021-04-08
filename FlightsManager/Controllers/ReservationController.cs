@@ -109,6 +109,41 @@ namespace FlightsManager.Controllers
             }
             ///////////////////////////////////////////////////////////////
         }
+
+        public async Task<IActionResult> ReservationDateSortedIndex (IndexReservationViewModel model) 
+        {
+            model.Pager = new PagerViewModel();
+            model.Pager.CurrentPage = model.Pager.CurrentPage <= 0 ? 1 : model.Pager.CurrentPage;
+
+            List<ReservationViewModel> items = await _context.Reservations.Skip((model.Pager.CurrentPage - 1) * PageSize).Take(PageSize).Select(c => new ReservationViewModel()
+            {
+                Id = c.Id,
+                ReservationDate = c.ReservationDate,
+                TicketId = c.TicketId
+
+            }).OrderByDescending(it => it.ReservationDate).ToListAsync();
+
+            model.Items = items;
+            model.Pager.PagesCount = (int)Math.Ceiling(_context.Flights.Count() / (double)PageSize);
+
+            //////////////////// check for logged in employee -> admin
+            byte[] empIdBytes = new byte[200];
+            if (HttpContext.Session.TryGetValue("empId", out empIdBytes))
+            {
+                int employeeId = int.Parse(Encoding.UTF8.GetString(empIdBytes));
+                List<Employee> employees = await (from emp in _context.Employees where emp.Id == employeeId select emp).ToListAsync();
+                Employee employee = employees[0];
+                ViewData["isLoggedIn"] = true;
+                return RedirectToAction(nameof(AdminIndex));
+            }
+            else
+            {
+                ViewData["isLoggedIn"] = false;
+                return View(model);
+            }
+            ///////////////////////////////////////////////////////////////
+        }
+
         public IActionResult Create(int? id)
         {
             Flight flight = _context.Flights.Find(id);

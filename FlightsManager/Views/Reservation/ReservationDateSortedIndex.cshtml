@@ -34,7 +34,7 @@
         {
             <tr>
                 <td>
-                    @Html.DisplayFor(modelItem =>   item.ReservationDate)
+                    @Html.DisplayFor(modelItem => item.ReservationDate)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => _context.Countries.Find(_context.Addresses.Find(_context.Flights.Find(_context.Tickets.Find(item.TicketId).FlightId).LocationFromId).CountryId).Name)
