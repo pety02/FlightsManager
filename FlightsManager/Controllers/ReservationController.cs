@@ -13,6 +13,8 @@ using System.Threading.Tasks;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
 using FlightsManager.Models.Web.Flights;
+using System.Net.Mail;
+using System.Net;
 
 namespace FlightsManager.Controllers
 {
@@ -20,6 +22,7 @@ namespace FlightsManager.Controllers
     {
         private const int PageSize = 10;
         private readonly FlightsManagerContext _context;
+        private FlightController flightCtrl = new FlightController();
 
         public ReservationController() 
         {
@@ -40,7 +43,7 @@ namespace FlightsManager.Controllers
             }).ToListAsync();
 
             model.Items = items;
-            model.Pager.PagesCount = (int)Math.Ceiling(_context.Flights.Count() / (double)PageSize);
+            model.Pager.PagesCount = (int)Math.Ceiling(_context.Reservations.Count() / (double)PageSize);
 
             //////////////////// check for logged in employee -> admin
             byte[] empIdBytes = new byte[200];
@@ -103,7 +106,7 @@ namespace FlightsManager.Controllers
             }).ToListAsync();
 
             model.Items = items;
-            model.Pager.PagesCount = (int)Math.Ceiling(_context.Flights.Count() / (double)PageSize);
+            model.Pager.PagesCount = (int)Math.Ceiling(_context.Reservations.Count() / (double)PageSize);
 
             //////////////////// check for logged in employee -> admin
             byte[] empIdBytes = new byte[200];
@@ -414,6 +417,15 @@ namespace FlightsManager.Controllers
                         _context.Passagers.Add(_pass);
                         await _context.SaveChangesAsync();
 
+                        int _flId = _context.Flights.Find(_context.Tickets.Find(_res.TicketId).FlightId).Id;
+                        foreach (var item in flightCtrl.passagerNames)
+                        {
+                            if (item.Equals(new Tuple<int, List<string>>(_flId, new List<string>())))
+                            {
+                                item.Item2.Add(_pass.FirstName + " " + _pass.LastName);
+                            }
+                        }
+
                         int psId = _context.ReservationPassagers.Max(ps => ps.Id);
                         ReservationPassager _rp = new ReservationPassager()
                         {
@@ -426,27 +438,46 @@ namespace FlightsManager.Controllers
                         await _context.SaveChangesAsync();
 
                         // sends email
-                        /*MimeMessage message = new MimeMessage();
+                        MimeMessage message = new MimeMessage();
                         MailboxAddress from = new MailboxAddress("Admin",
-                        "petya.licheva2002@abv.bg");
+                        "petya.licheva2002@gmail.com");
                         message.From.Add(from);
-                        MailboxAddress to = new MailboxAddress("User",
+                        string passFullName = _pass.FirstName + " " + _pass.LastName;
+                        MailboxAddress to = new MailboxAddress(passFullName,
                         model.Email);
                         message.To.Add(to);
-                        message.Subject = "Information about your flight reservation:";
-                        BodyBuilder bodyBuilder = new BodyBuilder();
-                        bodyBuilder.HtmlBody = "<h1>Your reservation is accepted!</h1><p>For more information please contact us on petya.licheva2002@abv.bg!</p>";
-                        bodyBuilder.TextBody = "Your reservation is accepted! For more information please contact us on petya.licheva2002@abv.bg!";
-                        message.Body = bodyBuilder.ToMessageBody();
-                        SmtpClient client = new SmtpClient();
-                        client.Connect("localhost", 25, true);
-                        client.Authenticate("petya.licheva2002@abv.bg", "*Parola@021115_krm!");
-                        client.Send(message);
-                        client.Disconnect(true);
-                        client.Dispose();*/
+
+                        message.Subject = "About your flight reservation:";
+
+                        string text = "Hello, " + passFullName + "!" + Environment.NewLine
+                            + "Today (" + _res.ReservationDate + "), you made a reservation for a plane ticket for a flight with No "
+                            + model.FlightId + ". Your ticket is with No "
+                            + _res.TicketId + "." + Environment.NewLine + Environment.NewLine + "Personal Information:" + Environment.NewLine
+                            + "First Name: " + _pass.FirstName + Environment.NewLine
+                            + "Second Name: " + _pass.SecondName + Environment.NewLine
+                            + "Last Name: " + _pass.LastName + Environment.NewLine
+                            + "Personal Identification Number: " + _pass.Egn + Environment.NewLine
+                            + "Phone Number: " + _pass.PhoneNumber + Environment.NewLine
+                            + "Email: " + model.Email + Environment.NewLine
+                            + Environment.NewLine + "If some of this data is incorrect or the person who made this reservation was not you,"
+                            + " please contact us on email: petya.licheva2002@gmail.com" + Environment.NewLine + Environment.NewLine
+                            + "Greetings from FlightManager's team!";
+
+                        message.Body = new TextPart("plain")
+                        {
+                            Text = text
+                        };
+                        using (var client = new MailKit.Net.Smtp.SmtpClient())
+                        {
+                            client.Connect("smtp.gmail.com", 587, false);
+                            client.Authenticate("petya.licheva2002@gmail.com", "myPass_Petya123");
+
+                            client.Send(message);
+                            await client.DisconnectAsync(true);
+                        }
                         /////////////////////////////////////////////////////////////////
 
-                        /*int rcId = _context.ReservationConfirmations.Max(rc => rc.Id);
+                        int rcId = _context.ReservationConfirmations.Max(rc => rc.Id);
                         Reservation_Confirmation _rc = new Reservation_Confirmation()
                         {
                             Id = rcId + 1,
@@ -455,7 +486,7 @@ namespace FlightsManager.Controllers
                         };
 
                         _context.ReservationConfirmations.Add(_rc);
-                        await _context.SaveChangesAsync();*/
+                        await _context.SaveChangesAsync();
 
                         return RedirectToAction(nameof(Index));
                     }
@@ -508,27 +539,46 @@ namespace FlightsManager.Controllers
                         await _context.SaveChangesAsync();
 
                         // sends email
-                        /*MimeMessage message = new MimeMessage();
+                        MimeMessage message = new MimeMessage();
                         MailboxAddress from = new MailboxAddress("Admin",
-                        "petya.licheva2002@abv.bg");
+                        "petya.licheva2002@gmail.com");
                         message.From.Add(from);
-                        MailboxAddress to = new MailboxAddress("User",
+                        string passFullName = _pass.FirstName + " " + _pass.LastName;
+                        MailboxAddress to = new MailboxAddress(passFullName,
                         model.Email);
                         message.To.Add(to);
-                        message.Subject = "Information about your flight reservation:";
-                        BodyBuilder bodyBuilder = new BodyBuilder();
-                        bodyBuilder.HtmlBody = "<h1>Your reservation is accepted!</h1><p>For more information please contact us on petya.licheva2002@abv.bg!</p>";
-                        bodyBuilder.TextBody = "Your reservation is accepted! For more information please contact us on petya.licheva2002@abv.bg!";
-                        message.Body = bodyBuilder.ToMessageBody();
-                        SmtpClient client = new SmtpClient();
-                        client.Connect("localhost", 25, true);
-                        client.Authenticate("petya.licheva2002@abv.bg", "*Parola@021115_krm!");
-                        client.Send(message);
-                        client.Disconnect(true);
-                        client.Dispose();*/
+
+                        message.Subject = "About your flight reservation:";
+
+                        string text = "Hello, " + passFullName + "!" + Environment.NewLine
+                            + "Today (" + _res.ReservationDate + "), you made a reservation for a plane ticket for a flight with No "
+                            + model.FlightId + ". Your ticket is with No "
+                            + _res.TicketId + "." + Environment.NewLine + Environment.NewLine + "Personal Information:" + Environment.NewLine
+                            + "First Name: " + _pass.FirstName + Environment.NewLine
+                            + "Second Name: " + _pass.SecondName + Environment.NewLine
+                            + "Last Name: " + _pass.LastName + Environment.NewLine
+                            + "Personal Identification Number: " + _pass.Egn + Environment.NewLine
+                            + "Phone Number: " + _pass.PhoneNumber + Environment.NewLine
+                            + "Email: " + model.Email + Environment.NewLine
+                            + Environment.NewLine + "If some of this data is incorrect or the person who made this reservation was not you,"
+                            + " please contact us on email: petya.licheva2002@gmail.com" + Environment.NewLine + Environment.NewLine
+                            + "Greetings from FlightManager's team!";
+
+                        message.Body = new TextPart("plain")
+                        {
+                            Text = text
+                        };
+                        using (var client = new MailKit.Net.Smtp.SmtpClient())
+                        {
+                            client.Connect("smtp.gmail.com", 587, false);
+                            client.Authenticate("petya.licheva2002@gmail.com", "myPass_Petya123");
+
+                            client.Send(message);
+                            await client.DisconnectAsync(true);
+                        }
                         /////////////////////////////////////////////////////////////////
 
-                        /*int rcId = _context.ReservationConfirmations.Max(rc => rc.Id);
+                        int rcId = _context.ReservationConfirmations.Max(rc => rc.Id);
                         Reservation_Confirmation _rc = new Reservation_Confirmation()
                         {
                             Id = rcId + 1,
@@ -537,7 +587,7 @@ namespace FlightsManager.Controllers
                         };
 
                         _context.ReservationConfirmations.Add(_rc);
-                        await _context.SaveChangesAsync();*/
+                        await _context.SaveChangesAsync();
 
                         return RedirectToAction(nameof(Index));
                     }
@@ -591,27 +641,46 @@ namespace FlightsManager.Controllers
                     await _context.SaveChangesAsync();
 
                     // sends email
-                    /*MimeMessage message = new MimeMessage();
+                    MimeMessage message = new MimeMessage();
                     MailboxAddress from = new MailboxAddress("Admin",
-                    "petya.licheva2002@abv.bg");
+                    "petya.licheva2002@gmail.com");
                     message.From.Add(from);
-                    MailboxAddress to = new MailboxAddress("User",
+                    string passFullName = _pass.FirstName + " " + _pass.LastName;
+                    MailboxAddress to = new MailboxAddress(passFullName,
                     model.Email);
                     message.To.Add(to);
-                    message.Subject = "Information about your flight reservation:";
-                    BodyBuilder bodyBuilder = new BodyBuilder();
-                    bodyBuilder.HtmlBody = "<h1>Your reservation is accepted!</h1><p>For more information please contact us on petya.licheva2002@abv.bg!</p>";
-                    bodyBuilder.TextBody = "Your reservation is accepted! For more information please contact us on petya.licheva2002@abv.bg!";
-                    message.Body = bodyBuilder.ToMessageBody();
-                    SmtpClient client = new SmtpClient();
-                    client.Connect("localhost", 25, true);
-                    client.Authenticate("petya.licheva2002@abv.bg", "*Parola@021115_krm!");
-                    client.Send(message);
-                    client.Disconnect(true);
-                    client.Dispose();*/
+
+                    message.Subject = "About your flight reservation:";
+
+                    string text = "Hello, " + passFullName + "!" + Environment.NewLine
+                        + "Today (" + _res.ReservationDate + "), you made a reservation for a plane ticket for a flight with No "
+                        + model.FlightId +  ". Your ticket is with No "
+                        + _res.TicketId + "." + Environment.NewLine + Environment.NewLine + "Personal Information:" + Environment.NewLine
+                        + "First Name: " + _pass.FirstName + Environment.NewLine
+                        + "Second Name: " + _pass.SecondName + Environment.NewLine
+                        + "Last Name: " + _pass.LastName + Environment.NewLine
+                        + "Personal Identification Number: " + _pass.Egn + Environment.NewLine
+                        + "Phone Number: " + _pass.PhoneNumber + Environment.NewLine
+                        + "Email: " + model.Email + Environment.NewLine
+                        + Environment.NewLine + "If some of this data is incorrect or the person who made this reservation was not you,"
+                        + " please contact us on email: petya.licheva2002@gmail.com" + Environment.NewLine + Environment.NewLine
+                        + "Greetings from FlightManager's team!";
+
+                    message.Body = new TextPart("plain")
+                    {
+                        Text = text
+                    };
+                    using (var client = new MailKit.Net.Smtp.SmtpClient())
+                    {
+                        client.Connect("smtp.gmail.com", 587, false);
+                        client.Authenticate("petya.licheva2002@gmail.com", "myPass_Petya123");
+
+                        client.Send(message);
+                        await client.DisconnectAsync(true);
+                    }
                     /////////////////////////////////////////////////////////////////
 
-                    /*int rcId = _context.ReservationConfirmations.Max(rc => rc.Id);
+                    int rcId = _context.ReservationConfirmations.Max(rc => rc.Id);
                     Reservation_Confirmation _rc = new Reservation_Confirmation()
                     {
                         Id = rcId + 1,
@@ -620,7 +689,7 @@ namespace FlightsManager.Controllers
                     };
 
                     _context.ReservationConfirmations.Add(_rc);
-                    await _context.SaveChangesAsync();*/
+                    await _context.SaveChangesAsync();
 
                     return RedirectToAction(nameof(Index));
                 }

@@ -56,7 +56,7 @@ namespace FlightsManager
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Home}/{action=Reservations}/{id?}");
+                    pattern: "{controller=Home}/{action=Welcome}/{id?}");
             });
         }
     }

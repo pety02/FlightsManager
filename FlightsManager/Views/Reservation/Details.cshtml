@@ -4,13 +4,13 @@
     string unm = (string)ViewData["username"];
     if (isLoggedIn)
     {
-        <p>Welcome, @unm!</p>
-        <a type="button" asp-area="" asp-controller="Employee" asp-action="LogOut">LogOut</a>
-        <p><a asp-controller="Reservation" asp-action="ReservationDateSortedIndex">Sort By Reservation Date</a></p>
+        <p>Welcome, <strong style="color:darkred;">@unm</strong>!</p>
+        <a type="button" class="btn btn-dark" asp-area="" asp-controller="Employee" asp-action="LogOut">LogOut</a>
+        <a asp-controller="Reservation" class="btn btn-light" asp-action="ReservationDateSortedIndex">Sort By Reservation Date</a>
     }
     else
     {
-        <a asp-controller="Reservation" asp-action="ReservationDateSortedIndex">Sort By Reservation Date</a>
+        <a asp-controller="Reservation" class="btn btn-light" asp-action="ReservationDateSortedIndex">Sort By Reservation Date</a>
     }
 
     string rId = ViewData["_resId"] as string;
@@ -35,6 +35,7 @@
     string cnt = ViewData["_tickCnt"] as string;
     string totPr = ViewData["_totalPr"] as string;
 }
+<hr />
 <h1>Reservation Information</h1>
 
 <table class="table">

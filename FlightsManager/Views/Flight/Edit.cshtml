@@ -6,8 +6,8 @@
     string unm = (string)ViewData["username"];
     if (isLoggedIn)
     {
-        <p>Welcome, @unm!</p>
-        <a type="button" asp-area="" asp-controller="Employee" asp-action="LogOut">LogOut</a>
+        <p>Welcome, <strong style="color:darkred;">@unm</strong>!</p>
+        <a type="button" class="btn btn-dark" asp-area="" asp-controller="Employee" asp-action="LogOut">LogOut</a>
     }
 
     var plane = ViewData["plane"] as FlightsManager.Models.Data.Plane;
@@ -43,6 +43,7 @@
     var duration = (flight.LandingDateTime - flight.TakeOffDateTime).TotalMinutes + " mins";
 }
 
+<hr />
 <h2>Edit Flight</h2>
 <form method="post" class="container-fluid" asp-controller="Flight" asp-action="Edit">
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
@@ -162,8 +163,8 @@
         </tbody>
     </table>
     <div class="form-group">
-        <input type="submit" value="Edit" class="btn btn-primary" />
         <a type="button" name="backToAllFlightsBtn" class="btn btn-light" asp-area="" asp-controller="Flight" asp-action="AdminIndex">Back</a>
+        <input type="submit" value="Edit" class="btn btn-primary" />
     </div>
 </form>
 

@@ -4,15 +4,15 @@
     string unm = (string)ViewData["username"];
     if (isLoggedIn)
     {
-        <p>Welcome, @unm!</p>
-        <a type="button" asp-area="" asp-controller="Employee" asp-action="LogOut">LogOut</a>
+        <p>Welcome, <strong style="color:darkred;">@unm</strong>!</p>
+        <a type="button" class="btn btn-dark" asp-area="" asp-controller="Employee" asp-action="LogOut">LogOut</a>
     }
 
     FlightsManager.Models.Data.FlightsManagerContext _context = new FlightsManager.Models.Data.FlightsManagerContext();
 }
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
+
+<a asp-action="Create" class="btn btn-light">Create New</a>
+<hr />
 <table class="table">
     <thead>
         <tr>

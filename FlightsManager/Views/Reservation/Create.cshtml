@@ -6,13 +6,13 @@
     string unm = (string)ViewData["username"];
     if (isLoggedIn)
     {
-        <p>Welcome, @unm!</p>
-        <a type="button" asp-area="" asp-controller="Employee" asp-action="LogOut">LogOut</a>
-        <p><a asp-controller="Reservation" asp-action="ReservationDateSortedIndex">Sort By Reservation Date</a></p>
+        <p>Welcome, <strong style="color:darkred;">@unm</strong>!</p>
+        <a type="button" class="btn btn-dark" asp-area="" asp-controller="Employee" asp-action="LogOut">LogOut</a>
+        <a asp-controller="Reservation" class="btn btn-light" asp-action="ReservationDateSortedIndex">Sort By Reservation Date</a>
     }
     else
     {
-        <a asp-controller="Reservation" asp-action="ReservationDateSortedIndex">Sort By Reservation Date</a>
+        <a asp-controller="Reservation" class="btn btn-light" asp-action="ReservationDateSortedIndex">Sort By Reservation Date</a>
     }
 
     FlightsManager.Models.Data.Flight resFlight = ViewData["resevationFlight"] as FlightsManager.Models.Data.Flight;
@@ -35,6 +35,7 @@
     List<FlightsManager.Models.Data.TicketType> ticketType = (from t in ctx.TicketTypes select t).ToList();
 }
 
+<hr />
 <form method="post" asp-action="Create" class="container container-fluid form">
     <table class="table" id="resTbl">
         <thead>
@@ -247,10 +248,10 @@
             </tr>
             <tr class="d-table-row">
                 <td class="col-6">
-                    <a href="/Flight/Index" class="btn btn-info">Cancel</a>
+                    <a href="/Flight/Index" class="btn btn-light">Cancel</a>
                 </td>
                 <td class="col-6">
-                    <input type="submit" value="Create" class="btn btn-info" />
+                    <input type="submit" value="Create" class="btn btn-primary" />
                 </td>
             </tr>
         </tbody>

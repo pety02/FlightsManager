@@ -6,8 +6,8 @@
     string unm = (string)ViewData["username"];
     if (isLoggedIn)
     {
-        <p>Welcome, @unm!</p>
-        <a type="button" asp-area="" asp-controller="Employee" asp-action="LogOut">LogOut</a>
+        <p>Welcome, <strong style="color:darkred;">@unm</strong>!</p>
+        <a type="button" class="btn btn-dark" asp-area="" asp-controller="Employee" asp-action="LogOut">LogOut</a>
     }
 
     FlightsManager.Models.Data.FlightsManagerContext ctx = new FlightsManager.Models.Data.FlightsManagerContext();
@@ -37,6 +37,7 @@
     List<FlightsManager.Models.Data.Plane> allPlanes = ViewData["allPlanes"] as List<FlightsManager.Models.Data.Plane>;
 }
 
+<hr />
 <h2>Create Flight</h2>
 <form method="post" class="container-fluid" asp-controller="Flight" asp-action="Create">
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
@@ -118,8 +119,8 @@
         </tbody>
     </table>
     <div class="form-group">
-        <input type="submit" value="Create" class="btn btn-primary" />
         <a type="button" name="backToAllFlightsBtn" class="btn btn-light" asp-area="" asp-controller="Flight" asp-action="AdminIndex">Back</a>
+        <input type="submit" value="Create" class="btn btn-primary" />
     </div>
 </form>
 

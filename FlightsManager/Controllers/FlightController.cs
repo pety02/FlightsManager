@@ -14,6 +14,7 @@ namespace FlightsManager.Controllers
     {
         private const int PageSize = 10;
         private readonly FlightsManagerContext _context;
+        public List<Tuple<int, List<string>>> passagerNames = new List<Tuple<int, List<string>>>();
 
         public FlightController()
         {
@@ -231,6 +232,8 @@ namespace FlightsManager.Controllers
 
                         _context.Flights.Add(flight);
                         await _context.SaveChangesAsync();
+
+                        passagerNames.Add(new Tuple<int, List<string>>(flight.Id, new List<string>()));
 
                         return RedirectToAction(nameof(Index));
                     }
@@ -500,16 +503,20 @@ namespace FlightsManager.Controllers
                     string passagersNames = "";
                     foreach (var item in reservations)
                     {
-                        Ticket ticket = _context.Tickets.Find(item.TicketId);
-                        Flight _flight = _context.Flights.Find(ticket.FlightId);
-                        var query2 = from rp in _context.ReservationPassagers where rp.ResrvationId == item.Id select rp;
-                        List<ReservationPassager> reservationPassagers = query2.ToList();
                         string del = " ";
-                        foreach (var item2 in reservationPassagers)
+                        foreach (var item2 in passagerNames)
                         {
-                            Passager p = _context.Passagers.Find(item2.PassagerId);
-                            passagersNames += del + p.FirstName + " " + p.LastName;
-                            del = ", ";
+                            if (item2.Item1.Equals(flight.Id))
+                            {
+                                List<string> names = item2.Item2;
+                                for (int i = 0; i < names.Count; i++)
+                                {
+                                    
+                                    passagersNames += del +  names[i];
+                                    del = ", ";
+                                }
+                            }
+                            
                         }
                     }
 
@@ -561,16 +568,20 @@ namespace FlightsManager.Controllers
                     string passagersNames = "";
                     foreach (var item in reservations)
                     {
-                        Ticket ticket = _context.Tickets.Find(item.TicketId);
-                        Flight _flight = _context.Flights.Find(ticket.FlightId);
-                        var query2 = from rp in _context.ReservationPassagers where rp.ResrvationId == item.Id select rp;
-                        List<ReservationPassager> reservationPassagers = query2.ToList();
                         string del = " ";
-                        foreach (var item2 in reservationPassagers)
+                        foreach (var item2 in passagerNames)
                         {
-                            Passager p = _context.Passagers.Find(item2.PassagerId);
-                            passagersNames += del + p.FirstName + " " + p.LastName;
-                            del = ", ";
+                            if (item2.Item1.Equals(flight.Id))
+                            {
+                                List<string> names = item2.Item2;
+                                for (int i = 0; i < names.Count; i++)
+                                {
+
+                                    passagersNames += del + names[i];
+                                    del = ", ";
+                                }
+                            }
+
                         }
                     }
 
@@ -590,16 +601,20 @@ namespace FlightsManager.Controllers
                 string passagersNames = "";
                 foreach (var item in reservations)
                 {
-                    Ticket ticket = _context.Tickets.Find(item.TicketId);
-                    Flight _flight = _context.Flights.Find(ticket.FlightId);
-                    var query2 = from rp in _context.ReservationPassagers where rp.ResrvationId == item.Id select rp;
-                    List<ReservationPassager> reservationPassagers = query2.ToList();
                     string del = " ";
-                    foreach (var item2 in reservationPassagers)
+                    foreach (var item2 in passagerNames)
                     {
-                        Passager p = _context.Passagers.Find(item2.PassagerId);
-                        passagersNames += del + p.FirstName + " " + p.LastName;
-                        del = ", ";
+                        if (item2.Item1.Equals(flight.Id))
+                        {
+                            List<string> names = item2.Item2;
+                            for (int i = 0; i < names.Count; i++)
+                            {
+
+                                passagersNames += del + names[i];
+                                del = ", ";
+                            }
+                        }
+
                     }
                 }
 

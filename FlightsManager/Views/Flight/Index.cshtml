@@ -1,11 +1,11 @@
 ﻿@model FlightsManager.Models.Web.Flights.IndexFlightViewModel
-@{ 
-    bool isLoggedIn = (bool) ViewData["isLoggedIn"];
-    string unm = (string) ViewData["username"];
+@{
+    bool isLoggedIn = (bool)ViewData["isLoggedIn"];
+    string unm = (string)ViewData["username"];
     if (isLoggedIn)
     {
-        <p>Welcome, @unm!</p>
-        <a type="button" asp-area="" asp-controller="Employee" asp-action="LogOut">LogOut</a>
+        <p>Welcome, <strong style="color:darkred;">@unm</strong>!</p>
+        <a type="button" class="btn btn-dark" asp-area="" asp-controller="Employee" asp-action="LogOut">LogOut</a>
     }
 
     FlightsManager.Models.Data.FlightsManagerContext _context = new FlightsManager.Models.Data.FlightsManagerContext();
@@ -32,26 +32,26 @@
     <tbody>
         @foreach (var item in Model.Items)
         {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => _context.LivingPlaces.Find(_context.Addresses.Find(item.LocationFromId).LivingPlaceId).Name), @Html.DisplayFor(modelItem => _context.Countries.Find(_context.Addresses.Find(item.LocationFromId).CountryId).Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => _context.LivingPlaces.Find(_context.Addresses.Find(item.LocationToId).LivingPlaceId).Name), @Html.DisplayFor(modelItem => _context.Countries.Find(_context.Addresses.Find(item.LocationToId).CountryId).Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.TakeOffDateTime)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.LandingDateTime)
-            </td>
-            <td>
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a>
-            </td>
-            <td>
-                <a asp-action="Create" asp-controller="Reservation" asp-route-id="@item.Id">Reserve</a>
-            </td>
-        </tr>
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => _context.LivingPlaces.Find(_context.Addresses.Find(item.LocationFromId).LivingPlaceId).Name), @Html.DisplayFor(modelItem => _context.Countries.Find(_context.Addresses.Find(item.LocationFromId).CountryId).Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => _context.LivingPlaces.Find(_context.Addresses.Find(item.LocationToId).LivingPlaceId).Name), @Html.DisplayFor(modelItem => _context.Countries.Find(_context.Addresses.Find(item.LocationToId).CountryId).Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TakeOffDateTime)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.LandingDateTime)
+                </td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@item.Id">Details</a>
+                </td>
+                <td>
+                    <a asp-action="Create" asp-controller="Reservation" asp-route-id="@item.Id">Reserve</a>
+                </td>
+            </tr>
         }
     </tbody>
     <ul class="pagination">

@@ -4,8 +4,8 @@
     string unm = (string)ViewData["username"];
     if (isLoggedIn)
     {
-        <p>Welcome, @unm!</p>
-        <a type="button" asp-area="" asp-controller="Employee" asp-action="LogOut">LogOut</a>
+        <p>Welcome, <strong style="color:darkred;">@unm</strong>!</p>
+        <a type="button" class="btn btn-dark" asp-area="" asp-controller="Employee" asp-action="LogOut">LogOut</a>
     }
 
     var flight = ViewData["Flight"] as FlightsManager.Models.Data.Flight;
@@ -15,6 +15,8 @@
 
     var passagersNames = ViewData["passagers"] as string;
 }
+
+<hr />
 <h1>Flight Information</h1>
 <table class="table">
     <tr class="d-table-row">
