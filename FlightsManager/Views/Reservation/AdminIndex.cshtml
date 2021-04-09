@@ -1,15 +1,21 @@
 ﻿@model FlightsManager.Models.Web.Reservation.IndexReservationViewModel
 @{
     bool isLoggedIn = (bool)ViewData["isLoggedIn"];
+    string unm = (string)ViewData["username"];
     if (isLoggedIn)
     {
+        <p>Welcome, @unm!</p>
         <a type="button" asp-area="" asp-controller="Employee" asp-action="LogOut">LogOut</a>
+        <p><a asp-controller="Reservation" asp-action="ReservationDateSortedIndex">Sort By Reservation Date</a></p>
+    }
+    else
+    {
+        <a asp-controller="Reservation" asp-action="ReservationDateSortedIndex">Sort By Reservation Date</a>
     }
 
     FlightsManager.Models.Data.FlightsManagerContext _context = new FlightsManager.Models.Data.FlightsManagerContext();
 }
 
-<a asp-controller="Reservation" asp-action="ReservationDateSortedIndex">Sort By Reservation Date</a>
 <table class="table">
     <thead>
         <tr>

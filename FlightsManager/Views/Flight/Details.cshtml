@@ -1,5 +1,13 @@
 ﻿@model FlightsManager.Models.Data.Flight
 @{
+    bool isLoggedIn = (bool)ViewData["isLoggedIn"];
+    string unm = (string)ViewData["username"];
+    if (isLoggedIn)
+    {
+        <p>Welcome, @unm!</p>
+        <a type="button" asp-area="" asp-controller="Employee" asp-action="LogOut">LogOut</a>
+    }
+
     var flight = ViewData["Flight"] as FlightsManager.Models.Data.Flight;
     var locationFrom = ViewData["LocationFrom"] as string;
     var locationTo = ViewData["LocationTo"] as string;

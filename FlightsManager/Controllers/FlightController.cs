@@ -49,6 +49,7 @@ namespace FlightsManager.Controllers
                     List<Employee> employees = await (from emp in _context.Employees where 
                                                       emp.Id == employeeId select emp).ToListAsync();
                     Employee employee = employees[0];
+                    ViewData["username"] = employee.Username;
                     ViewData["isLoggedIn"] = true;
                     ViewData["isAdmin"] = true;
 
@@ -59,6 +60,7 @@ namespace FlightsManager.Controllers
                     List<Employee> employees = await (from emp in _context.Employees 
                                                       where emp.Id == employeeId select emp).ToListAsync();
                     Employee employee = employees[0];
+                    ViewData["username"] = employee.Username;
                     ViewData["isLoggedIn"] = true;
                     ViewData["isAdmin"] = false;
 
@@ -66,6 +68,9 @@ namespace FlightsManager.Controllers
                 }
                 else
                 {
+                    ViewData["isLoggedIn"] = false;
+                    ViewData["isAdmin"] = false;
+
                     return RedirectToAction(nameof(Index));
                 }
             }
@@ -98,19 +103,42 @@ namespace FlightsManager.Controllers
             model.Items = items;
             model.Pager.PagesCount = (int)Math.Ceiling(_context.Flights.Count() / (double)PageSize);
 
-            //////////////////// check for logged in employee -> admin
+            //////////////////// check for logged in employee -> admin 
             byte[] empIdBytes = new byte[200];
             if (HttpContext.Session.TryGetValue("empId", out empIdBytes))
             {
                 int employeeId = int.Parse(Encoding.UTF8.GetString(empIdBytes));
-                List<Employee> employees = await (from emp in _context.Employees where emp.Id == employeeId select emp).ToListAsync();
-                Employee employee = employees[0];
-                ViewData["isLoggedIn"] = true;
-                return RedirectToAction(nameof(AdminIndex));
+                if (employeeId == 1)
+                {
+                    Employee employee = _context.Employees.Find(employeeId);
+                    ViewData["username"] = employee.Username;
+                    ViewData["isLoggedIn"] = true;
+                    ViewData["isAdmin"] = true;
+
+                    return RedirectToAction(nameof(AdminIndex));
+                }
+                else if (employeeId != 1 && employeeId > 0)
+                {
+                    Employee employee = _context.Employees.Find(employeeId); ;
+                    ViewData["username"] = employee.Username;
+                    ViewData["isLoggedIn"] = true;
+                    ViewData["isAdmin"] = false;
+
+                    return View(model);
+                }
+                else
+                {
+                    ViewData["isLoggedIn"] = false;
+                    ViewData["isAdmin"] = false;
+
+                    return View(model);
+                }
             }
             else
             {
                 ViewData["isLoggedIn"] = false;
+                ViewData["isAdmin"] = false;
+
                 return View(model);
             }
             ///////////////////////////////////////////////////////////////
@@ -118,165 +146,564 @@ namespace FlightsManager.Controllers
 
         public IActionResult Create()
         {
-            AddFlightViewModel model = new AddFlightViewModel();
+            byte[] empIdBytes = new byte[200];
+            if (HttpContext.Session.TryGetValue("empId", out empIdBytes))
+            {
+                int employeeId = int.Parse(Encoding.UTF8.GetString(empIdBytes));
+                if (employeeId == 1)
+                {
+                    List<Employee> employees = (from emp in _context.Employees
+                                                     where
+                      emp.Id == employeeId
+                                                     select emp).ToList();
+                    Employee employee = employees[0];
+                    ViewData["username"] = employee.Username;
+                    ViewData["isLoggedIn"] = true;
+                    ViewData["isAdmin"] = true;
 
-            List<Plane> planes = (from p in _context.Planes select p).ToList();
-            ViewData["allPlanes"] = planes;
+                    AddFlightViewModel model = new AddFlightViewModel();
 
-            return View(model);
+                    List<Plane> planes = (from p in _context.Planes select p).ToList();
+                    ViewData["allPlanes"] = planes;
+
+                    return View(model);
+                }
+                else if (employeeId != 1 && employeeId > 0)
+                {
+                    List<Employee> employees = (from emp in _context.Employees
+                                                     where emp.Id == employeeId
+                                                     select emp).ToList();
+                    Employee employee = employees[0];
+                    ViewData["username"] = employee.Username;
+                    ViewData["isLoggedIn"] = true;
+                    ViewData["isAdmin"] = false;
+
+                    return RedirectToAction(nameof(Index));
+                }
+                else
+                {
+                    ViewData["isLoggedIn"] = false;
+                    ViewData["isAdmin"] = false;
+
+                    return RedirectToAction(nameof(Index));
+                }
+            }
+            else
+            {
+                ViewData["isLoggedIn"] = false;
+                ViewData["isAdmin"] = false;
+
+                return RedirectToAction(nameof(Index));
+            }            
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(AddFlightViewModel model)
         {
-            
-            if (ModelState.IsValid)
+            byte[] empIdBytes = new byte[200];
+            if (HttpContext.Session.TryGetValue("empId", out empIdBytes))
             {
-                int id = _context.Flights.Max(f => f.Id);
-                Flight flight = new Flight
+                int employeeId = int.Parse(Encoding.UTF8.GetString(empIdBytes));
+                if (employeeId == 1)
                 {
-                    Id = id + 1,
-                    LocationFromId = model.LocationFromId,
-                    LocationToId = model.LocationToId,
-                    TakeOffDateTime = model.TakeOffDateTime,
-                    LandingDateTime = model.LandingDateTime,
-                    PlaneId = model.PlaneId
-                };
+                    List<Employee> employees = (from emp in _context.Employees
+                                                where
+                 emp.Id == employeeId
+                                                select emp).ToList();
+                    Employee employee = employees[0];
+                    ViewData["username"] = employee.Username;
+                    ViewData["isLoggedIn"] = true;
+                    ViewData["isAdmin"] = true;
 
-                _context.Flights.Add(flight);
-                await _context.SaveChangesAsync();
+                    if (ModelState.IsValid)
+                    {
+                        int id = _context.Flights.Max(f => f.Id);
+                        Flight flight = new Flight
+                        {
+                            Id = id + 1,
+                            LocationFromId = model.LocationFromId,
+                            LocationToId = model.LocationToId,
+                            TakeOffDateTime = model.TakeOffDateTime,
+                            LandingDateTime = model.LandingDateTime,
+                            PlaneId = model.PlaneId
+                        };
+
+                        _context.Flights.Add(flight);
+                        await _context.SaveChangesAsync();
+
+                        return RedirectToAction(nameof(Index));
+                    }
+
+                    return View(model);
+                }
+                else if (employeeId != 1 && employeeId > 0)
+                {
+                    List<Employee> employees = (from emp in _context.Employees
+                                                where emp.Id == employeeId
+                                                select emp).ToList();
+                    Employee employee = employees[0];
+                    ViewData["username"] = employee.Username;
+                    ViewData["isLoggedIn"] = true;
+                    ViewData["isAdmin"] = false;
+
+                    return RedirectToAction(nameof(Index));
+                }
+                else
+                {
+                    ViewData["isLoggedIn"] = false;
+                    ViewData["isAdmin"] = false;
+
+                    return RedirectToAction(nameof(Index));
+                }
+            }
+            else
+            {
+                ViewData["isLoggedIn"] = false;
+                ViewData["isAdmin"] = false;
 
                 return RedirectToAction(nameof(Index));
             }
-
-            return View(model);
         }
 
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
+            byte[] empIdBytes = new byte[200];
+            if (HttpContext.Session.TryGetValue("empId", out empIdBytes))
             {
-                return NotFound();
+                int employeeId = int.Parse(Encoding.UTF8.GetString(empIdBytes));
+                if (employeeId == 1)
+                {
+                    List<Employee> employees = (from emp in _context.Employees
+                                                where
+                 emp.Id == employeeId
+                                                select emp).ToList();
+                    Employee employee = employees[0];
+                    ViewData["username"] = employee.Username;
+                    ViewData["isLoggedIn"] = true;
+                    ViewData["isAdmin"] = true;
+
+                    if (id == null)
+                    {
+                        return NotFound();
+                    }
+
+                    Flight flight = await _context.Flights.FindAsync(id);
+
+                    if (flight == null)
+                    {
+                        return NotFound();
+                    }
+
+                    EditFlightViewModel model = new EditFlightViewModel
+                    {
+                        LocationFromId = flight.LocationFromId,
+                        LocationToId = flight.LocationToId,
+                        TakeOffDateTime = flight.TakeOffDateTime,
+                        LandingDateTime = flight.LandingDateTime,
+                        PlaneId = flight.PlaneId
+                    };
+
+                    List<Plane> planes = (from p in _context.Planes select p).ToList();
+
+                    ViewData["locationFrom"] = _context.Addresses.Find(flight.LocationFromId);
+                    ViewData["locationTo"] = _context.Addresses.Find(flight.LocationToId);
+                    ViewData["plane"] = _context.Planes.Find(flight.PlaneId);
+                    ViewData["flight"] = _context.Flights.Find(flight.Id);
+                    ViewData["allPlanes"] = planes;
+
+                    return View(model);
+                }
+                else if (employeeId != 1 && employeeId > 0)
+                {
+                    List<Employee> employees = (from emp in _context.Employees
+                                                where emp.Id == employeeId
+                                                select emp).ToList();
+                    Employee employee = employees[0];
+                    ViewData["username"] = employee.Username;
+                    ViewData["isLoggedIn"] = true;
+                    ViewData["isAdmin"] = false;
+
+                    return RedirectToAction(nameof(Index));
+                }
+                else
+                {
+                    ViewData["isLoggedIn"] = false;
+                    ViewData["isAdmin"] = false;
+
+                    return RedirectToAction(nameof(Index));
+                }
             }
-
-            Flight flight = await _context.Flights.FindAsync(id);
-
-            if (flight == null)
+            else
             {
-                return NotFound();
+                ViewData["isLoggedIn"] = false;
+                ViewData["isAdmin"] = false;
+
+                return RedirectToAction(nameof(Index));
             }
-
-            EditFlightViewModel model = new EditFlightViewModel
-            {
-                LocationFromId = flight.LocationFromId,
-                LocationToId = flight.LocationToId,
-                TakeOffDateTime = flight.TakeOffDateTime,
-                LandingDateTime = flight.LandingDateTime,
-                PlaneId = flight.PlaneId
-            };
-
-            List<Plane> planes = (from p in _context.Planes select p).ToList();
-
-            ViewData["locationFrom"] = _context.Addresses.Find(flight.LocationFromId);
-            ViewData["locationTo"] = _context.Addresses.Find(flight.LocationToId);
-            ViewData["plane"] = _context.Planes.Find(flight.PlaneId);
-            ViewData["flight"] = _context.Flights.Find(flight.Id);
-            ViewData["allPlanes"] = planes;
-
-            return View(model);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(EditFlightViewModel model)
         {
-            if (ModelState.IsValid)
+            byte[] empIdBytes = new byte[200];
+            if (HttpContext.Session.TryGetValue("empId", out empIdBytes))
             {
-                Flight flight = new Flight
+                int employeeId = int.Parse(Encoding.UTF8.GetString(empIdBytes));
+                if (employeeId == 1)
                 {
-                    Id = model.Id,
-                    LocationFromId = model.LocationFromId,
-                    LocationToId = model.LocationToId,
-                    TakeOffDateTime = model.TakeOffDateTime,
-                    LandingDateTime = model.LandingDateTime,
-                    PlaneId = model.PlaneId
-                };
+                    List<Employee> employees = (from emp in _context.Employees
+                                                where
+                 emp.Id == employeeId
+                                                select emp).ToList();
+                    Employee employee = employees[0];
+                    ViewData["username"] = employee.Username;
+                    ViewData["isLoggedIn"] = true;
+                    ViewData["isAdmin"] = true;
 
-                try
-                {
-                    _context.Update(flight);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!IsFlightExists(flight.Id))
+                    if (ModelState.IsValid)
                     {
-                        return NotFound();
+                        Flight flight = new Flight
+                        {
+                            Id = model.Id,
+                            LocationFromId = model.LocationFromId,
+                            LocationToId = model.LocationToId,
+                            TakeOffDateTime = model.TakeOffDateTime,
+                            LandingDateTime = model.LandingDateTime,
+                            PlaneId = model.PlaneId
+                        };
+
+                        try
+                        {
+                            _context.Update(flight);
+                            await _context.SaveChangesAsync();
+                        }
+                        catch (DbUpdateConcurrencyException)
+                        {
+                            if (!IsFlightExists(flight.Id))
+                            {
+                                return NotFound();
+                            }
+                            else
+                            {
+                                throw;
+                            }
+                        }
+
+                        return RedirectToAction(nameof(Index));
                     }
-                    else
-                    {
-                        throw;
-                    }
+
+                    return View(model);
                 }
+                else if (employeeId != 1 && employeeId > 0)
+                {
+                    List<Employee> employees = (from emp in _context.Employees
+                                                where emp.Id == employeeId
+                                                select emp).ToList();
+                    Employee employee = employees[0];
+                    ViewData["username"] = employee.Username;
+                    ViewData["isLoggedIn"] = true;
+                    ViewData["isAdmin"] = false;
+
+                    return RedirectToAction(nameof(Index));
+                }
+                else
+                {
+                    ViewData["isLoggedIn"] = false;
+                    ViewData["isAdmin"] = false;
+
+                    return RedirectToAction(nameof(Index));
+                }
+            }
+            else
+            {
+                ViewData["isLoggedIn"] = false;
+                ViewData["isAdmin"] = false;
 
                 return RedirectToAction(nameof(Index));
             }
-
-            return View(model);
         }
 
         public async Task<IActionResult> Delete(int id)
         {
-            Flight flight = await _context.Flights.FindAsync(id);
-            _context.Flights.Remove(flight);
-            await _context.SaveChangesAsync();
+            byte[] empIdBytes = new byte[200];
+            if (HttpContext.Session.TryGetValue("empId", out empIdBytes))
+            {
+                int employeeId = int.Parse(Encoding.UTF8.GetString(empIdBytes));
+                if (employeeId == 1)
+                {
+                    List<Employee> employees = (from emp in _context.Employees
+                                                where
+                 emp.Id == employeeId
+                                                select emp).ToList();
+                    Employee employee = employees[0];
+                    ViewData["username"] = employee.Username;
+                    ViewData["isLoggedIn"] = true;
+                    ViewData["isAdmin"] = true;
 
-            return RedirectToAction(nameof(Index));
+                    Flight flight = await _context.Flights.FindAsync(id);
+                    _context.Flights.Remove(flight);
+                    await _context.SaveChangesAsync();
+
+                    return RedirectToAction(nameof(Index));
+                }
+                else if (employeeId != 1 && employeeId > 0)
+                {
+                    List<Employee> employees = (from emp in _context.Employees
+                                                where emp.Id == employeeId
+                                                select emp).ToList();
+                    Employee employee = employees[0];
+                    ViewData["username"] = employee.Username;
+                    ViewData["isLoggedIn"] = true;
+                    ViewData["isAdmin"] = false;
+
+                    return RedirectToAction(nameof(Index));
+                }
+                else
+                {
+                    ViewData["isLoggedIn"] = false;
+                    ViewData["isAdmin"] = false;
+
+                    return RedirectToAction(nameof(Index));
+                }
+            }
+            else
+            {
+                ViewData["isLoggedIn"] = false;
+                ViewData["isAdmin"] = false;
+
+                return RedirectToAction(nameof(Index));
+            }
         }
 
         public async Task<IActionResult> Details(int id)
         {
-            Flight flight = await _context.Flights.FindAsync(id);
-            var query1 = from r in _context.Reservations where r.Id == flight.Id select r;
-            List<Reservation> reservations = query1.ToList();
-            string passagersNames = "";
-            foreach (var item in reservations)
+            byte[] empIdBytes = new byte[200];
+            if (HttpContext.Session.TryGetValue("empId", out empIdBytes))
             {
-                Ticket ticket = _context.Tickets.Find(item.TicketId);
-                Flight _flight = _context.Flights.Find(ticket.FlightId);
-                var query2 = from rp in _context.ReservationPassagers where rp.ResrvationId == item.Id select rp;
-                List<ReservationPassager> reservationPassagers = query2.ToList();
-                string del = " ";
-                foreach (var item2 in reservationPassagers)
+                int employeeId = int.Parse(Encoding.UTF8.GetString(empIdBytes));
+                if (employeeId == 1)
                 {
-                    Passager p = _context.Passagers.Find(item2.PassagerId);
-                    passagersNames += del + p.FirstName + " " + p.LastName;
-                    del = ", ";
+                    List<Employee> employees = (from emp in _context.Employees
+                                                where
+                 emp.Id == employeeId
+                                                select emp).ToList();
+                    Employee employee = employees[0];
+                    ViewData["username"] = employee.Username;
+                    ViewData["isLoggedIn"] = true;
+                    ViewData["isAdmin"] = true;
+
+                    Flight flight = await _context.Flights.FindAsync(id);
+                    var query1 = from r in _context.Reservations where r.Id == flight.Id select r;
+                    List<Reservation> reservations = query1.ToList();
+                    string passagersNames = "";
+                    foreach (var item in reservations)
+                    {
+                        Ticket ticket = _context.Tickets.Find(item.TicketId);
+                        Flight _flight = _context.Flights.Find(ticket.FlightId);
+                        var query2 = from rp in _context.ReservationPassagers where rp.ResrvationId == item.Id select rp;
+                        List<ReservationPassager> reservationPassagers = query2.ToList();
+                        string del = " ";
+                        foreach (var item2 in reservationPassagers)
+                        {
+                            Passager p = _context.Passagers.Find(item2.PassagerId);
+                            passagersNames += del + p.FirstName + " " + p.LastName;
+                            del = ", ";
+                        }
+                    }
+
+                    ViewData["passagers"] = passagersNames;
+
+                    return Details(flight);
+                }
+                else if (employeeId != 1 && employeeId > 0)
+                {
+                    List<Employee> employees = (from emp in _context.Employees
+                                                where emp.Id == employeeId
+                                                select emp).ToList();
+                    Employee employee = employees[0];
+                    ViewData["username"] = employee.Username;
+                    ViewData["isLoggedIn"] = true;
+                    ViewData["isAdmin"] = false;
+
+                    Flight flight = await _context.Flights.FindAsync(id);
+                    var query1 = from r in _context.Reservations where r.Id == flight.Id select r;
+                    List<Reservation> reservations = query1.ToList();
+                    string passagersNames = "";
+                    foreach (var item in reservations)
+                    {
+                        Ticket ticket = _context.Tickets.Find(item.TicketId);
+                        Flight _flight = _context.Flights.Find(ticket.FlightId);
+                        var query2 = from rp in _context.ReservationPassagers where rp.ResrvationId == item.Id select rp;
+                        List<ReservationPassager> reservationPassagers = query2.ToList();
+                        string del = " ";
+                        foreach (var item2 in reservationPassagers)
+                        {
+                            Passager p = _context.Passagers.Find(item2.PassagerId);
+                            passagersNames += del + p.FirstName + " " + p.LastName;
+                            del = ", ";
+                        }
+                    }
+
+                    ViewData["passagers"] = passagersNames;
+
+                    return Details(flight);
+                }
+                else
+                {
+                    ViewData["isLoggedIn"] = false;
+                    ViewData["isAdmin"] = false;
+
+                    Flight flight = await _context.Flights.FindAsync(id);
+                    var query1 = from r in _context.Reservations where r.Id == flight.Id select r;
+                    List<Reservation> reservations = query1.ToList();
+                    string passagersNames = "";
+                    foreach (var item in reservations)
+                    {
+                        Ticket ticket = _context.Tickets.Find(item.TicketId);
+                        Flight _flight = _context.Flights.Find(ticket.FlightId);
+                        var query2 = from rp in _context.ReservationPassagers where rp.ResrvationId == item.Id select rp;
+                        List<ReservationPassager> reservationPassagers = query2.ToList();
+                        string del = " ";
+                        foreach (var item2 in reservationPassagers)
+                        {
+                            Passager p = _context.Passagers.Find(item2.PassagerId);
+                            passagersNames += del + p.FirstName + " " + p.LastName;
+                            del = ", ";
+                        }
+                    }
+
+                    ViewData["passagers"] = passagersNames;
+
+                    return Details(flight);
                 }
             }
+            else
+            {
+                ViewData["isLoggedIn"] = false;
+                ViewData["isAdmin"] = false;
 
-            ViewData["passagers"] = passagersNames;
+                Flight flight = await _context.Flights.FindAsync(id);
+                var query1 = from r in _context.Reservations where r.Id == flight.Id select r;
+                List<Reservation> reservations = query1.ToList();
+                string passagersNames = "";
+                foreach (var item in reservations)
+                {
+                    Ticket ticket = _context.Tickets.Find(item.TicketId);
+                    Flight _flight = _context.Flights.Find(ticket.FlightId);
+                    var query2 = from rp in _context.ReservationPassagers where rp.ResrvationId == item.Id select rp;
+                    List<ReservationPassager> reservationPassagers = query2.ToList();
+                    string del = " ";
+                    foreach (var item2 in reservationPassagers)
+                    {
+                        Passager p = _context.Passagers.Find(item2.PassagerId);
+                        passagersNames += del + p.FirstName + " " + p.LastName;
+                        del = ", ";
+                    }
+                }
 
-            return Details(flight);
+                ViewData["passagers"] = passagersNames;
+
+                return Details(flight);
+            }
         }
 
         [NonAction]
         public ViewResult Details(Flight model)
         {
-            ViewData["Flight"] = model;
+            byte[] empIdBytes = new byte[200];
+            if (HttpContext.Session.TryGetValue("empId", out empIdBytes))
+            {
+                int employeeId = int.Parse(Encoding.UTF8.GetString(empIdBytes));
+                if (employeeId == 1)
+                {
+                    List<Employee> employees = (from emp in _context.Employees
+                                                where
+                 emp.Id == employeeId
+                                                select emp).ToList();
+                    Employee employee = employees[0];
+                    ViewData["username"] = employee.Username;
+                    ViewData["isLoggedIn"] = true;
+                    ViewData["isAdmin"] = true;
 
-            Address locFrom = _context.Addresses.Find(model.LocationFromId);
-            Country countrFrom = _context.Countries.Find(locFrom.CountryId);
-            LivingPlace lpFrom = _context.LivingPlaces.Find(locFrom.LivingPlaceId);
-            ViewData["LocationFrom"] = lpFrom.Name + ", " + countrFrom.Name;
-            
-            Address locTo = _context.Addresses.Find(model.LocationToId);
-            Country countrTo = _context.Countries.Find(locTo.CountryId);
-            LivingPlace lpTo = _context.LivingPlaces.Find(locTo.LivingPlaceId);
-            ViewData["LocationTo"] = lpTo.Name + ", " + countrTo.Name;
-            
-            return View();
+                    ViewData["Flight"] = model;
+
+                    Address locFrom = _context.Addresses.Find(model.LocationFromId);
+                    Country countrFrom = _context.Countries.Find(locFrom.CountryId);
+                    LivingPlace lpFrom = _context.LivingPlaces.Find(locFrom.LivingPlaceId);
+                    ViewData["LocationFrom"] = lpFrom.Name + ", " + countrFrom.Name;
+
+                    Address locTo = _context.Addresses.Find(model.LocationToId);
+                    Country countrTo = _context.Countries.Find(locTo.CountryId);
+                    LivingPlace lpTo = _context.LivingPlaces.Find(locTo.LivingPlaceId);
+                    ViewData["LocationTo"] = lpTo.Name + ", " + countrTo.Name;
+
+                    return View();
+                }
+                else if (employeeId != 1 && employeeId > 0)
+                {
+                    List<Employee> employees = (from emp in _context.Employees
+                                                where emp.Id == employeeId
+                                                select emp).ToList();
+                    Employee employee = employees[0];
+                    ViewData["username"] = employee.Username;
+                    ViewData["isLoggedIn"] = true;
+                    ViewData["isAdmin"] = false;
+
+                    ViewData["Flight"] = model;
+
+                    Address locFrom = _context.Addresses.Find(model.LocationFromId);
+                    Country countrFrom = _context.Countries.Find(locFrom.CountryId);
+                    LivingPlace lpFrom = _context.LivingPlaces.Find(locFrom.LivingPlaceId);
+                    ViewData["LocationFrom"] = lpFrom.Name + ", " + countrFrom.Name;
+
+                    Address locTo = _context.Addresses.Find(model.LocationToId);
+                    Country countrTo = _context.Countries.Find(locTo.CountryId);
+                    LivingPlace lpTo = _context.LivingPlaces.Find(locTo.LivingPlaceId);
+                    ViewData["LocationTo"] = lpTo.Name + ", " + countrTo.Name;
+
+                    return View();
+                }
+                else
+                {
+                    ViewData["isLoggedIn"] = false;
+                    ViewData["isAdmin"] = false;
+
+                    ViewData["Flight"] = model;
+
+                    Address locFrom = _context.Addresses.Find(model.LocationFromId);
+                    Country countrFrom = _context.Countries.Find(locFrom.CountryId);
+                    LivingPlace lpFrom = _context.LivingPlaces.Find(locFrom.LivingPlaceId);
+                    ViewData["LocationFrom"] = lpFrom.Name + ", " + countrFrom.Name;
+
+                    Address locTo = _context.Addresses.Find(model.LocationToId);
+                    Country countrTo = _context.Countries.Find(locTo.CountryId);
+                    LivingPlace lpTo = _context.LivingPlaces.Find(locTo.LivingPlaceId);
+                    ViewData["LocationTo"] = lpTo.Name + ", " + countrTo.Name;
+
+                    return View();
+                }
+            }
+            else
+            {
+                ViewData["isLoggedIn"] = false;
+                ViewData["isAdmin"] = false;
+
+                ViewData["Flight"] = model;
+
+                Address locFrom = _context.Addresses.Find(model.LocationFromId);
+                Country countrFrom = _context.Countries.Find(locFrom.CountryId);
+                LivingPlace lpFrom = _context.LivingPlaces.Find(locFrom.LivingPlaceId);
+                ViewData["LocationFrom"] = lpFrom.Name + ", " + countrFrom.Name;
+
+                Address locTo = _context.Addresses.Find(model.LocationToId);
+                Country countrTo = _context.Countries.Find(locTo.CountryId);
+                LivingPlace lpTo = _context.LivingPlaces.Find(locTo.LivingPlaceId);
+                ViewData["LocationTo"] = lpTo.Name + ", " + countrTo.Name;
+
+                return View();
+            }
         }
 
         private bool IsFlightExists(int id)

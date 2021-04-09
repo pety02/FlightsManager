@@ -1,6 +1,15 @@
 ﻿@model FlightsManager.Models.Web.Flights.EditFlightViewModel
 @{
     ViewData["Title"] = "Edit";
+
+    bool isLoggedIn = (bool)ViewData["isLoggedIn"];
+    string unm = (string)ViewData["username"];
+    if (isLoggedIn)
+    {
+        <p>Welcome, @unm!</p>
+        <a type="button" asp-area="" asp-controller="Employee" asp-action="LogOut">LogOut</a>
+    }
+
     var plane = ViewData["plane"] as FlightsManager.Models.Data.Plane;
     var flight = ViewData["flight"] as FlightsManager.Models.Data.Flight;
 

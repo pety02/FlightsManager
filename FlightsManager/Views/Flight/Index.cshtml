@@ -1,8 +1,10 @@
 ﻿@model FlightsManager.Models.Web.Flights.IndexFlightViewModel
 @{ 
     bool isLoggedIn = (bool) ViewData["isLoggedIn"];
+    string unm = (string) ViewData["username"];
     if (isLoggedIn)
     {
+        <p>Welcome, @unm!</p>
         <a type="button" asp-area="" asp-controller="Employee" asp-action="LogOut">LogOut</a>
     }
 

@@ -187,28 +187,45 @@ namespace FlightsManager.Controllers
                 string hashedPass = HashPassword.GenerateSHA512(model.Password);
                 var query = from emp in _context.Employees where emp.Username == model.Username && emp.Password == hashedPass select emp;
                 List<Employee> employees = await query.ToListAsync();
-                Employee employee = employees[0];
-
-                if (employee != null)
+                if (employees != null && employees.Count != 0)
                 {
-                    HttpContext.Session.Set("empId", Encoding.UTF8.GetBytes(employee.Id.ToString()));
-                    if (employee.Id == 1)
+                    Employee employee = employees[0];
+
+                    if (employee != null)
                     {
-                        return RedirectToAction("AdminIndex", "Flight");
+                        HttpContext.Session.Set("empId", Encoding.UTF8.GetBytes(employee.Id.ToString()));
+                        if (employee.Id == 1)
+                        {
+                            ViewData["username"] = employee.Username;
+                            return RedirectToAction("AdminIndex", "Flight");
+                        }
+                        else if (employee.Id != 1 && employee.Id > 0)
+                        {
+                            ViewData["username"] = employee.Username;
+                            return RedirectToAction("Index", "Flight");
+                        }
+                        else
+                        {
+                            ViewData["incorrectCredentials"] = "Your credentials were incorrect! Please, type correct username and password!";
+                            return RedirectToAction(nameof(LoginForm));
+                        }
                     }
                     else
                     {
-                        return RedirectToAction("Index", "Flight");
+                        ViewData["incorrectCredentials"] = "Your credentials were incorrect! Please, type correct username and password!";
+                        return RedirectToAction(nameof(LoginForm));
                     }
                 }
                 else
                 {
-                    return View(model);
+                    ViewData["incorrectCredentials"] = "Your credentials were incorrect! Please, type correct username and password!";
+                    return RedirectToAction(nameof(LoginForm));
                 }
             }
             else
             {
-                return View(model);
+                ViewData["incorrectCredentials"] = "Your credentials were incorrect! Please, type correct username and password!";
+                return RedirectToAction(nameof(LoginForm));
             }
         }
  

@@ -1,5 +1,18 @@
 ﻿@model FlightsManager.Models.Data.Reservation
 @{
+    bool isLoggedIn = (bool)ViewData["isLoggedIn"];
+    string unm = (string)ViewData["username"];
+    if (isLoggedIn)
+    {
+        <p>Welcome, @unm!</p>
+        <a type="button" asp-area="" asp-controller="Employee" asp-action="LogOut">LogOut</a>
+        <p><a asp-controller="Reservation" asp-action="ReservationDateSortedIndex">Sort By Reservation Date</a></p>
+    }
+    else
+    {
+        <a asp-controller="Reservation" asp-action="ReservationDateSortedIndex">Sort By Reservation Date</a>
+    }
+
     string rId = ViewData["_resId"] as string;
     string rDate = ViewData["_resDate"] as string;
     string lf = ViewData["_locFrom"] as string;
@@ -64,7 +77,7 @@
     </tr>
     <tr>
         <th>
-           Location To: 
+            Location To:
         </th>
         <td>
             <p>
@@ -94,7 +107,7 @@
     </tr>
     <tr>
         <th>
-           Duration:
+            Duration:
         </th>
         <td>
             <p>

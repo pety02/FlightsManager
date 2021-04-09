@@ -1,9 +1,15 @@
 ﻿@model FlightsManager.Models.Web.Employees.LoginEmployeeViewModel
 @{
     ViewData["Title"] = "Login";
+    string incorrectLoginMsg = ViewData["incorrectCredentials"] as string;
 }
 <h1 class="text-left text-info title">@ViewData["Title"]</h1>
-
+@{ 
+    if (incorrectLoginMsg != null && incorrectLoginMsg != "" && incorrectLoginMsg.Length > 0)
+    {
+        <p>@incorrectLoginMsg</p>
+    }
+}
 <form method="post" asp-action="Login" class="container container-fluid form">
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
     <div class="form-group">

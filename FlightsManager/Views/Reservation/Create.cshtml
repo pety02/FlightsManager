@@ -2,6 +2,19 @@
 @{
     ViewData["Title"] = "Login";
 
+    bool isLoggedIn = (bool)ViewData["isLoggedIn"];
+    string unm = (string)ViewData["username"];
+    if (isLoggedIn)
+    {
+        <p>Welcome, @unm!</p>
+        <a type="button" asp-area="" asp-controller="Employee" asp-action="LogOut">LogOut</a>
+        <p><a asp-controller="Reservation" asp-action="ReservationDateSortedIndex">Sort By Reservation Date</a></p>
+    }
+    else
+    {
+        <a asp-controller="Reservation" asp-action="ReservationDateSortedIndex">Sort By Reservation Date</a>
+    }
+
     FlightsManager.Models.Data.Flight resFlight = ViewData["resevationFlight"] as FlightsManager.Models.Data.Flight;
 
     FlightsManager.Models.Data.FlightsManagerContext ctx = new FlightsManager.Models.Data.FlightsManagerContext();
@@ -115,7 +128,7 @@
                 </td>
                 <td class="col-3">
                     <p>
-                       @pilotFullName
+                        @pilotFullName
                     </p>
                 </td>
             </tr>
@@ -219,7 +232,7 @@
                         @{
                             for (int j = 0; j < ticketType.Count; j++)
                             {
-                                
+
                                 <option value=@ticketType[j].Id>@ticketType[j].Name</option>
                             }
                         }
