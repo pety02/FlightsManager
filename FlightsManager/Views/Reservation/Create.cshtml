@@ -32,7 +32,13 @@
     string duration = (resFlight.LandingDateTime - resFlight.TakeOffDateTime).TotalMinutes + " mins.";
 
     List<FlightsManager.Models.Data.Nationality> nationalities = (from n in ctx.Nationalities select n).ToList();
-    List<FlightsManager.Models.Data.TicketType> ticketType = (from t in ctx.TicketTypes select t).ToList();
+    List<FlightsManager.Models.Data.Ticket> ticketType = (from t in ctx.Tickets where t.FlightId == resFlight.Id select t).ToList();
+    List<FlightsManager.Models.Data.TicketType> ticketTypeNames = new List<FlightsManager.Models.Data.TicketType>();
+    for (int i = 0; i < ticketType.Count; i++)
+    {
+        FlightsManager.Models.Data.TicketType _tickNm = (from _t in ctx.TicketTypes where _t.Id == ticketType[i].TicketTypeId select _t).First();
+        ticketTypeNames.Add(_tickNm);
+    }
 }
 
 <hr />
@@ -136,7 +142,6 @@
             <tr class="d-table-row">
                 <th class="table-active col-2" rowspan="2">
                     <p>Personal Information</p>
-                    <!--<button type="button" class="btn btn-info" onclick="addNewPassagerInputs();">Add</button>-->
                 </th>
                 <th class="table-active col-2">
                     <p>First Name</p>
@@ -176,7 +181,7 @@
                     <span asp-validation-for="EGN" class="text-danger"></span>
                 </td>
                 <td class="col-2" id="nat">
-                    <select asp-for="NationalityId" class="form-control required-fields" class="form-control required-fields">
+                    <select asp-for="NationalityId" class="form-control required-fields">
                         @{
                             for (int i = 0; i < nationalities.Count; i++)
                             {
@@ -231,10 +236,10 @@
                 <td class="col-3">
                     <select asp-for="TicketTypeId">
                         @{
-                            for (int j = 0; j < ticketType.Count; j++)
+                            for (int j = 0; j < ticketTypeNames.Count; j++)
                             {
 
-                                <option value=@ticketType[j].Id>@ticketType[j].Name</option>
+                                <option value=@ticketType[j].Id>@ticketTypeNames[j].Name</option>
                             }
                         }
                     </select>
@@ -256,11 +261,6 @@
             </tr>
         </tbody>
     </table>
-    <!--<h4>Extra Passagers</h4>
-    <div id="extrPassagers">
-
-    </div>
-    <br />-->
 </form>
 
 @section Scripts {
