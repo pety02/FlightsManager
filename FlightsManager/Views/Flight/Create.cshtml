@@ -11,7 +11,7 @@
     }
 
     FlightsManager.Models.Data.FlightsManagerContext ctx = new FlightsManager.Models.Data.FlightsManagerContext();
-    List<FlightsManager.Models.Data.Address> addrs = ctx.Addresses.Where(a => a.Id == 2).ToList();
+    List<FlightsManager.Models.Data.Address> addrs = ctx.Addresses.Where(a => a.AddressTypeId == 2).ToList();
     List<FlightsManager.Models.Data.Plane> planes = ctx.Planes.ToList();
     List<int> addrsFromIds = new List<int>();
     List<int> addrsToIds = new List<int>();

@@ -477,17 +477,6 @@ namespace FlightsManager.Controllers
                         }
                         /////////////////////////////////////////////////////////////////
 
-                        int rcId = _context.ReservationConfirmations.Max(rc => rc.Id);
-                        Reservation_Confirmation _rc = new Reservation_Confirmation()
-                        {
-                            Id = rcId + 1,
-                            ReservationId = _res.Id,
-                            Email = model.Email
-                        };
-
-                        _context.ReservationConfirmations.Add(_rc);
-                        await _context.SaveChangesAsync();
-
                         return RedirectToAction(nameof(Index));
                     }
 
@@ -577,17 +566,6 @@ namespace FlightsManager.Controllers
                             await client.DisconnectAsync(true);
                         }
                         /////////////////////////////////////////////////////////////////
-
-                        int rcId = _context.ReservationConfirmations.Max(rc => rc.Id);
-                        Reservation_Confirmation _rc = new Reservation_Confirmation()
-                        {
-                            Id = rcId + 1,
-                            ReservationId = _res.Id,
-                            Email = model.Email
-                        };
-
-                        _context.ReservationConfirmations.Add(_rc);
-                        await _context.SaveChangesAsync();
 
                         return RedirectToAction(nameof(Index));
                     }
@@ -680,17 +658,6 @@ namespace FlightsManager.Controllers
                     }
                     /////////////////////////////////////////////////////////////////
 
-                    int rcId = _context.ReservationConfirmations.Max(rc => rc.Id);
-                    Reservation_Confirmation _rc = new Reservation_Confirmation()
-                    {
-                        Id = rcId + 1,
-                        ReservationId = _res.Id,
-                        Email = model.Email
-                    };
-
-                    _context.ReservationConfirmations.Add(_rc);
-                    await _context.SaveChangesAsync();
-
                     return RedirectToAction(nameof(Index));
                 }
 
@@ -718,13 +685,9 @@ namespace FlightsManager.Controllers
                     Reservation reservation = await _context.Reservations.FindAsync(id);
                     ReservationPassager rp = (from r in _context.ReservationPassagers where r.ResrvationId == reservation.Id select r).First();
                     Passager p = (from pa in _context.Passagers where pa.Id == rp.PassagerId select pa).First();
-                    //Reservation_Confirmation rc = (from recon in _context.ReservationConfirmations where recon.ReservationId == reservation.Id select recon).First();
 
                     _context.ReservationPassagers.Remove(rp);
                     await _context.SaveChangesAsync();
-
-                    //_context.ReservationConfirmations.Remove(rc);
-                    //await _context.SaveChangesAsync();
 
                     _context.Passagers.Remove(p);
                     await _context.SaveChangesAsync();

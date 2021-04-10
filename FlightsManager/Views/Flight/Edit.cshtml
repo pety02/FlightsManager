@@ -16,7 +16,7 @@
     FlightsManager.Models.Data.FlightsManagerContext ctx = new FlightsManager.Models.Data.FlightsManagerContext();
     string locFrom = ctx.LivingPlaces.Find(ctx.Addresses.Find(flight.LocationFromId).LivingPlaceId).Name + ", " + ctx.Countries.Find(ctx.Addresses.Find(flight.LocationFromId).CountryId).Name;
     string locTo = ctx.LivingPlaces.Find(ctx.Addresses.Find(flight.LocationToId).LivingPlaceId).Name + ", " + ctx.Countries.Find(ctx.Addresses.Find(flight.LocationToId).CountryId).Name;
-    List<FlightsManager.Models.Data.Address> addrs = ctx.Addresses.Where(a => a.Id == 2).ToList();
+    List<FlightsManager.Models.Data.Address> addrs = ctx.Addresses.Where(a => a.AddressTypeId == 2).ToList();
     List<FlightsManager.Models.Data.Plane> planes = ctx.Planes.ToList();
     List<int> addrsFromIds = new List<int>();
     List<int> addrsToIds = new List<int>();
